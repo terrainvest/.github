@@ -6,6 +6,7 @@ inputs:
     required: true
   root_path:
     description: 'Repo path'
+    required: true
 runs:
   using: "composite"
   steps:

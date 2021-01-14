@@ -2,7 +2,8 @@ import os
 import sys
 
 def main(aws_profile, root_path):
-    rootDir = os.path.expanduser('~')    
+    rootDir = os.path.expanduser('~')
+    print(root_path)
 
     try:
         os.mkdir(f"{root_path}/.aws")
