@@ -29,7 +29,7 @@ def main(aws_profile):
 
     fileAws.close()
 
-    os.environ["AWS_PROFILE"] = 
+    os.environ["AWS_PROFILE"] = aws_profile
 
 if __name__ == "__main__":
     main(sys.argv[1])
