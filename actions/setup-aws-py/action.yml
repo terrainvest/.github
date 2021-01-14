@@ -7,5 +7,5 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: python3 ${{ github.action_path }}/main.py
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }}
       shell: bash

@@ -1,6 +1,7 @@
 import os
+import sys
 
-def main():
+def main(aws_profile):
     rootDir = os.path.expanduser('~')    
 
     ORG_TF_AWS_KEY_ID = os.environ["ORG_TF_AWS_KEY_ID"]
@@ -28,7 +29,7 @@ def main():
 
     fileAws.close()
 
-    os.environ["AWS_PROFILE"] = os.environ["aws_profile"]
+    os.environ["AWS_PROFILE"] = 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
