@@ -4,6 +4,13 @@ import sys
 def main(aws_profile):
     rootDir = os.path.expanduser('~')    
 
+    try:
+        os.mkdir(f"{rootDir}/.aws")
+    except OSError:
+        print ("Creation of the directory .aws failed")
+    else:
+        print ("Successfully created the directory .aws ")
+
     ORG_TF_AWS_KEY_ID = os.environ["ORG_TF_AWS_KEY_ID"]
     ORG_TF_AWS_SECRET_KEY = os.environ["ORG_TF_AWS_SECRET_KEY"]
     
@@ -13,7 +20,7 @@ def main(aws_profile):
     PRD_TF_AWS_KEY_ID = os.environ["PRD_TF_AWS_KEY_ID"]
     PRD_TF_AWS_SECRET_KEY = os.environ["PRD_TF_AWS_SECRET_KEY"]    
 
-    fileAws = open(f"{rootDir}/.aws","a+")
+    fileAws = open(f"{rootDir}/.aws/credentials","a+")
 
     fileAws.write("[org]")
     fileAws.write(f"aws_access_key_id = { ORG_TF_AWS_KEY_ID }")
