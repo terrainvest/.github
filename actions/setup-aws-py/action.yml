@@ -1,0 +1,9 @@
+name: 'Diff-Path'
+description: 'get paths'
+inputs:
+  aws_profile:
+    description: 'Profile to set'
+    required: true
+run:
+  using: python
+  main: main.py

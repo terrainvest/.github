@@ -1,0 +1,17 @@
+name: TF-Plan-Org
+
+on:
+  pull_resquest:
+    branches: 
+      - master
+    paths:
+      - 'org/*'
+
+env:
+  TF_VERSION: 0.14.4
+
+defaults:
+  run:
+    shell: bash
+    working-directory: org
+  
