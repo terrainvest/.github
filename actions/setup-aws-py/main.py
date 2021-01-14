@@ -6,7 +6,7 @@ def main(aws_profile, root_path):
     print(root_path)
 
     try:
-        os.mkdir(f"{root_path}/.aws")
+        os.mkdir(f"{root_path}.aws")
     except OSError:
         print (f"Creation of the directory {root_path}/.aws failed")
     else:
