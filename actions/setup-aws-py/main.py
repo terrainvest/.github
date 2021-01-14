@@ -23,21 +23,21 @@ def main(aws_profile, root_path):
 
     fileAws = open(f"{root_path}.aws/credentials","a+")
 
-    fileAws.write("[org]")
-    fileAws.write(f"aws_access_key_id = { ORG_TF_AWS_KEY_ID }")
-    fileAws.write(f"aws_secret_access_key = { ORG_TF_AWS_SECRET_KEY }")
+    fileAws.write("[org]\n")
+    fileAws.write(f"aws_access_key_id={ ORG_TF_AWS_KEY_ID }\n")
+    fileAws.write(f"aws_secret_access_key={ ORG_TF_AWS_SECRET_KEY }\n\n")
 
-    fileAws.write("[dev]")
-    fileAws.write(f"aws_access_key_id = { HML_TF_AWS_KEY_ID }")
-    fileAws.write(f"aws_secret_access_key = { HML_TF_AWS_SECRET_KEY }")
+    fileAws.write("[dev]\n")
+    fileAws.write(f"aws_access_key_id={ HML_TF_AWS_KEY_ID }\n")
+    fileAws.write(f"aws_secret_access_key={ HML_TF_AWS_SECRET_KEY }\n\n")
 
-    fileAws.write("[hml]")
-    fileAws.write(f"aws_access_key_id = { HML_TF_AWS_KEY_ID }")
-    fileAws.write(f"aws_secret_access_key = { HML_TF_AWS_SECRET_KEY }")
+    fileAws.write("[hml]\n")
+    fileAws.write(f"aws_access_key_id={ HML_TF_AWS_KEY_ID }\n")
+    fileAws.write(f"aws_secret_access_key={ HML_TF_AWS_SECRET_KEY }\n\n")
 
-    fileAws.write("[prd]")
-    fileAws.write(f"aws_access_key_id = { PRD_TF_AWS_KEY_ID }")
-    fileAws.write(f"aws_secret_access_key = { PRD_TF_AWS_SECRET_KEY }")
+    fileAws.write("[prd]\n")
+    fileAws.write(f"aws_access_key_id={ PRD_TF_AWS_KEY_ID }\n")
+    fileAws.write(f"aws_secret_access_key={ PRD_TF_AWS_SECRET_KEY }")
 
     fileAws.close()    
 
