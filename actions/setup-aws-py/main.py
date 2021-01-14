@@ -39,9 +39,7 @@ def main(aws_profile, root_path):
     fileAws.write(f"aws_access_key_id = { PRD_TF_AWS_KEY_ID }")
     fileAws.write(f"aws_secret_access_key = { PRD_TF_AWS_SECRET_KEY }")
 
-    fileAws.close()
-
-    print(f"echo 'AWS_PROFILE={aws_profile}' >> $GITHUB_ENV")
+    fileAws.close()    
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])
