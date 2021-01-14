@@ -1,15 +1,15 @@
 import os
 import sys
 
-def main(aws_profile):
+def main(aws_profile, root_path):
     rootDir = os.path.expanduser('~')    
 
     try:
-        os.mkdir(f"{rootDir}/.aws")
+        os.mkdir(f"{root_path}/.aws")
     except OSError:
-        print ("Creation of the directory .aws failed")
+        print (f"Creation of the directory {root_path}/.aws failed")
     else:
-        print ("Successfully created the directory .aws ")
+        print (f"Successfully created the directory {root_path}/.aws")
 
     ORG_TF_AWS_KEY_ID = os.environ["ORG_TF_AWS_KEY_ID"]
     ORG_TF_AWS_SECRET_KEY = os.environ["ORG_TF_AWS_SECRET_KEY"]
@@ -20,11 +20,15 @@ def main(aws_profile):
     PRD_TF_AWS_KEY_ID = os.environ["PRD_TF_AWS_KEY_ID"]
     PRD_TF_AWS_SECRET_KEY = os.environ["PRD_TF_AWS_SECRET_KEY"]    
 
-    fileAws = open(f"{rootDir}/.aws/credentials","a+")
+    fileAws = open(f"{root_path}/.aws/credentials","a+")
 
     fileAws.write("[org]")
     fileAws.write(f"aws_access_key_id = { ORG_TF_AWS_KEY_ID }")
     fileAws.write(f"aws_secret_access_key = { ORG_TF_AWS_SECRET_KEY }")
+
+    fileAws.write("[dev]")
+    fileAws.write(f"aws_access_key_id = { HML_TF_AWS_KEY_ID }")
+    fileAws.write(f"aws_secret_access_key = { HML_TF_AWS_SECRET_KEY }")
 
     fileAws.write("[hml]")
     fileAws.write(f"aws_access_key_id = { HML_TF_AWS_KEY_ID }")
@@ -36,7 +40,7 @@ def main(aws_profile):
 
     fileAws.close()
 
-    os.environ["AWS_PROFILE"] = aws_profile
+    print(f"echo 'AWS_PROFILE={aws_profile}' >> $GITHUB_ENV")
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
