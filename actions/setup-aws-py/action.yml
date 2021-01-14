@@ -4,6 +4,6 @@ inputs:
   aws_profile:
     description: 'Profile to set'
     required: true
-run:
+runs:
   using: python
   main: main.py
