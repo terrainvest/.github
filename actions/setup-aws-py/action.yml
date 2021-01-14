@@ -5,5 +5,7 @@ inputs:
     description: 'Profile to set'
     required: true
 runs:
-  using: python
-  main: main.py
+  using: "composite"
+  steps:
+    - run: python3 main.py
+      shell: bash
