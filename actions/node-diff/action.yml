@@ -1,0 +1,18 @@
+name: 'Diff-Path'
+description: 'get paths'
+inputs:
+  paths_changed:
+    description: 'Paths have changed'
+    required: true
+  current_commit:
+    description: 'Context commit'
+    required: true
+  rootDir:
+    description: 'Context commit'
+    required: true
+outputs:
+  paths:
+    description: 'Paths that have changed'
+runs:
+  using: 'node12'
+  main: 'index.js'
