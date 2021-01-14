@@ -10,5 +10,5 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.root_path }}
+    - run: echo "python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.root_path }}"
       shell: bash
