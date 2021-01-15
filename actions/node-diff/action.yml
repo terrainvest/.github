@@ -1,14 +1,11 @@
 name: 'Diff-Path'
 description: 'get paths'
-inputs:
-  paths_changed:
-    description: 'Paths have changed'
-    required: true
+inputs:  
   current_commit:
     description: 'Context commit'
     required: true
   rootDir:
-    description: 'Context commit'
+    description: 'root directory of tf'
     required: true
 outputs:
   paths:

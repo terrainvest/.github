@@ -31,7 +31,8 @@ getPath()
 
   async function setOutput(arrayPath) {
 
-    let paths = [];
+    let objPath = {};
+    objPath['paths'] = [];
 
     const promises = arrayPath.map(async (item) => {
     
@@ -44,8 +45,8 @@ getPath()
         for (let i = 1; i < itemArray.length - 1; i++) {          
           pathString += itemArray[i] + "/";
           
-          if(!paths.includes(pathString)){
-            paths.push(pathString)
+          if(!objPath['paths'].includes(pathString)){
+            objPath['paths'].push(pathString)
           }
 
         }               
@@ -59,6 +60,6 @@ getPath()
     await Promise.all(promises)          
           .catch(err => console.log("error: " + err))
 
-    core.setOutput("paths", paths);
+    core.setOutput("paths", JSON.stringify(objPath));
 
   }
