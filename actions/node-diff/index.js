@@ -4,7 +4,7 @@ const util = require('util');
 const currentCommit = core.getInput('current_commit');
 const rootDir = core.getInput('rootDir');  
 
-console.log("Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}")
+console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
 
 
 async function getPath() {
@@ -18,9 +18,7 @@ async function getPath() {
       console.log("Files that have changed:\n" + stdout);
 
       arrayPath = stdout.split("\n")
-      arrayPath.pop()
-
-      console.error(err);
+      arrayPath.pop()      
 
       return arrayPath
 
@@ -70,6 +68,6 @@ getPath()
           .catch(err => core.setFailed("error: " + err))
 
     core.setOutput("path", JSON.stringify(objPath));
-    console.log("output path: ${JSON.stringify(objPath)}")
+    console.log(`output path: ${JSON.stringify(objPath)}`)
 
   }
