@@ -50,10 +50,12 @@ getPath()
 
         for (let i = 1; i < itemArray.length - 1; i++) {          
           pathString += itemArray[i] + "/";
-          
-          if(!objPath['path'].includes(pathString)){
-            objPath['path'].push(pathString)
-          }
+
+          if(pathString.split('/').length == itemArray.length - 1){
+            if(!objPath['path'].includes(pathString)){
+              objPath['path'].push(pathString)
+            }            
+          }          
 
         }               
 
