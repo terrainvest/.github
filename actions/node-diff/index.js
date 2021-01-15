@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const util = require('util');
 
 try {  
-  const currentCommit = core.getInput('currentCommit');
+  const currentCommit = core.getInput('current_commit');
   const rootDir = core.getInput('rootDir');  
 } catch (error) {
   core.setFailed(error.message);
