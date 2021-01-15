@@ -8,7 +8,7 @@ inputs:
     description: 'root directory of tf'
     required: true
 outputs:
-  paths:
+  path:
     description: 'Paths that have changed'
 runs:
   using: 'node12'
