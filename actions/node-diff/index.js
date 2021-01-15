@@ -4,17 +4,29 @@ const util = require('util');
 const currentCommit = core.getInput('current_commit');
 const rootDir = core.getInput('rootDir');  
 
+console.log("Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}")
+
+
 async function getPath() {
   try {
       const { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);
       
+      if(!Boolean(stdout)){
+        core.setFailed("Nothing return from git diff-tree command at commit: "+ currentCommit);
+      }
+
+      console.log("Files that have changed:\n" + stdout);
+
       arrayPath = stdout.split("\n")
       arrayPath.pop()
+
+      console.error(err);
 
       return arrayPath
 
   }catch (err){
      console.error(err);
+     core.setFailed(err);
   };
 };
 
@@ -48,14 +60,16 @@ getPath()
         }               
 
       } else{
+        core.setFailed("rootDir not found in current repo!");
         throw new Error("rootDir not found in current repo!");
       }          
 
     });
     
     await Promise.all(promises)          
-          .catch(err => console.log("error: " + err))
+          .catch(err => core.setFailed("error: " + err))
 
     core.setOutput("path", JSON.stringify(objPath));
+    console.log("output path: ${JSON.stringify(objPath)}")
 
   }
