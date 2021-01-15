@@ -1,0 +1,8 @@
+{
+    "name": "TF WorkFlow",
+    "description": "Terra Investimentos Terraform CI workflow template.",
+    "iconName": "example-icon",
+    "categories": [
+        "HCL"
+    ]    
+}
