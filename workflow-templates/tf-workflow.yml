@@ -5,12 +5,18 @@ on:
     branches:
       - master
     paths:
-      - 'terraform/**'
-  pull_resquest:
+      - 'terraform/org/**'
+      - 'terraform/dev/**'
+      - 'terraform/hml/**'
+      - 'terraform/prd/**'
+  pull_request:
     branches: 
       - master
     paths:
-      - 'terraform/**'
+      - 'terraform/org/**'
+      - 'terraform/dev/**'
+      - 'terraform/hml/**'
+      - 'terraform/prd/**'
 
 env:
   TF_VERSION: 0.14.4
@@ -22,17 +28,24 @@ jobs:
     runs-on: ubuntu-latest
     name: Matrix Builder    
     outputs:
-      path: ${{steps.set-matrix.output.path}}
+      path: ${{steps.set-matrix.outputs.path}}
     steps:
 
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 3
 
-      - name: set-matrix
+      - name: setMatrix
+        id: set-matrix
         uses: terrainvest/.github/actions/node-diff@master
         with:
-          current_commit: ${{GITHUB_SHA}}
+          current_commit: ${{github.sha}}
           rootDir: terraform
+
+      - name: Show Generated Matrix
+        run: echo "${{ steps.set-matrix.outputs.path }}"
+
 
   terraformJob:
     needs: matrixBuilder
@@ -46,17 +59,21 @@ jobs:
         shell: bash
         working-directory: ${{matrix.path}}
     env:
-      PATH: ${{matrix.path}}
+      WD: ${{matrix.path}}      
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2        
 
-      - name: Get Environment
+      - name: Get Workspace
+        id: get-workspace
         run: |
           IFS='/'
-          read -ra ENV <<< ${{ env.PATH }}
-          echo "WORKSPACE=$(echo ${ENV[1]} | awk '{print tolower($0)}')" >> $GITHUB_ENV
+          read -ra ENV <<< ${{ env.WD }}
+          echo "::set-output name=WORKSPACE::"${ENV[1]}""
+
+      - name: Set ENV
+        run: echo "WORKSPACE=${{steps.get-workspace.outputs.WORKSPACE}}" >> $GITHUB_ENV
       
       - name: Setup AWS Profile
         uses: terrainvest/.github/actions/setup-aws-py@master
@@ -71,20 +88,30 @@ jobs:
           PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
           PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
       
+      - name: Get S3 Key
+        id: s3-key
+        uses: terrainvest/.github/actions/config-backend@master
+        with:
+          path: ${{ env.WD }}
+        
+      - name: Setup Terraform backend
+        run: |
+          echo 'profile = "${{ env.WORKSPACE }}"' >> ${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+          echo 'key = "${{ steps.s3-key.outputs.key }}"' >> ${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Terraform Create Workspace
-        id: workspace
-        run: |
-          terraform workspace new ${{ env.WORKSPACE }}
-          terraform workspace select ${{ env.WORKSPACE }}        
-
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init -backend-config=${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+
+      - name: Terraform Create Workspace
+        id: workspace
+        run: |          
+          terraform workspace select ${{ env.WORKSPACE }} || terraform workspace new ${{ env.WORKSPACE }}
 
       - name: Terraform Validate
         id: validate
@@ -135,9 +162,3 @@ jobs:
 
       - name: Delete AWS Credential
         run: rm -rf ~/.aws
-
-
-
-
-
-
