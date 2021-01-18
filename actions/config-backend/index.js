@@ -9,7 +9,7 @@ async function getKey(path) {
     let arrayPath = path.split("/")
     let key = ""
 
-    for (let index = 2; index <= arrayPath.length - 1; index++){
+    for (let index = 2; index < arrayPath.length - 1; index++){
       key += `${arrayPath[index]}/`
     }
 
