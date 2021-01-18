@@ -13,6 +13,8 @@ async function getKey(path) {
       key += `${arrayPath[index]}/`
     }
 
+    key += 'terraform.tfstate'
+
     return key
 
   }catch (err){     
