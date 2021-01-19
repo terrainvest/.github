@@ -13,6 +13,12 @@ const registryName = core.getInput('registry');
 console.log(`ACTION PATH + ENV: ${process.env.GITHUB_WORKSPACE}/.env`)
 console.log(`CURRENT DIR: ${process.cwd()}`)
 
+fs.readdir(process.cwd(), (err, files) => {
+    files.forEach(file => {
+      console.log(file);
+    });
+  });
+
 if (fs.existsSync(`${process.env.RUNNER_WORKSPACE}/.env`)) {
     console.log("EXISTE .ENV")
 }
