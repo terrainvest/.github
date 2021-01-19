@@ -12,7 +12,11 @@ async function run(){
 
     dotenv.config({path:`/.github/.env.lambda`});
 
+    console.log(process.env);
+
     const registryName = process.env["REGISTRY"];
+
+    console.log(`Registry Name: ${registryName}`);
 
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
