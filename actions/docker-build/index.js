@@ -3,32 +3,15 @@ const aws = require('aws-sdk');
 const util = require('util');
 const dotenv = require('dotenv');
 const github = require('@actions/github');
-const fs = require("fs");
 
 const exec = require('child_process').exec;
 
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
-console.log(`ACTION PATH + ENV: ${process.env.GITHUB_WORKSPACE}/.env`)
-console.log(`CURRENT DIR: ${process.cwd()}`)
-
-fs.readdir(process.cwd(), (err, files) => {
-    files.forEach(file => {
-      console.log(file);
-    });
-  });
-
-if (fs.existsSync(`${process.env.RUNNER_WORKSPACE}/.env`)) {
-    console.log("EXISTE .ENV")
-}
-else {
-    core.setFailed(`NAO EXISTE ENV`);
-}
-
 async function run(){
 
-    dotenv.config({path:`${github.workspace}/.env`})
+    dotenv.config({path:`.github/.env.account`})
 
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
