@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
     "aws-sdk": "^2.828.0",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
