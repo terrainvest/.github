@@ -3,6 +3,7 @@ const aws = require('aws-sdk');
 const util = require('util');
 const dotenv = require('dotenv');
 const github = require('@actions/github');
+const fs = require('fs');
 
 const exec = require('child_process').exec;
 
@@ -10,9 +11,14 @@ const awsProfile = core.getInput('aws_profile');
 
 async function run(){
 
-    dotenv.config({path:`${__dirname}/.github/.env.lambda`});
+    dotenv.config({path: `${__dirname}/.github/.env.lambda` });
 
-    console.log(process.env);
+    if(fs.existsSync(`${__dirname}/.github/.env.lambda`)){
+        console.log("EXISTE");
+    }
+    else{
+        console.log("N EXISTE");
+    }
 
     const registryName = process.env["REGISTRY"];
 
