@@ -10,9 +10,9 @@ const exec = require('child_process').exec;
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
-console.log(`ACTION PATH + ENV: ${github.action_path}/.env`)
+console.log(`ACTION PATH + ENV: ${github.workspace}/.env`)
 
-if (fs.existsSync(`${github.action_path}/.env`)) {
+if (fs.existsSync(`${github.workspace}/.env`)) {
     console.log("EXISTE .ENV")
 }
 else {
@@ -21,7 +21,7 @@ else {
 
 async function run(){
 
-    dotenv.config({path:`${github.action_path}/.env`})
+    dotenv.config({path:`${github.workspace}/.env`})
 
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
