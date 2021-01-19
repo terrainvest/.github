@@ -14,13 +14,8 @@ async function run(){
 
     console.log(`Running docker build, image: ${registryName}`);
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
-        if (stderr){
-            core.setFailed(`docker build has failed: ${stderr}`);
-        }
-
-        if (error){
-            core.setFailed(`docker build has failed: ${error}`);
-        }
+        if (stderr){ core.setFailed(`docker build has failed: ${stderr}`); }
+        if (error){ core.setFailed(`docker build has failed: ${error}`); }
     });
 
     let credentials = new aws.SharedIniFileCredentials({profile: awsProfile});
@@ -33,60 +28,39 @@ async function run(){
         ]
       };
 
-    let ecr = new aws.ECR();
-    let authToken;
-    let endPoint;
+    let ecr = new aws.ECR();    
 
     ecr.getAuthorizationToken(params, function(err, data) {
+        if (err) { core.setFailed(`get auth token failed: ${err}`); }
+        
+        let authToken = data.authorizationData[0].authorizationToken
+        let endPoint = data.authorizationData[0].proxyEndpoint.replace("https://", "")        
 
-        if (err) {
-            core.setFailed(`get auth token failed: ${err}`);
-        } else {
-            authToken = data.authorizationData[0].authorizationToken
-            endPoint = data.authorizationData[0].proxyEndpoint.replace("https://", "")
-        }
+        console.log(`Getting login of ecr: ${endPoint}`);
+        exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
+            if (stderr){ core.setFailed(`docker login has failed: ${stderr}`); }
+            if (error){ core.setFailed(`docker login has failed: ${error}`); }
 
-      });
+            console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
+            exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
+                    if (stderr){ core.setFailed(`docker tag has failed: ${stderr}`); }
+                    if (error){ core.setFailed(`docker tag has failed: ${error}`); }
+                });
 
-    console.log(`Getting login of ecr: ${endPoint}`);
-    exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
-        if (stderr){
-            core.setFailed(`docker login has failed: ${stderr}`);
-        }
+            console.log(`docker push ${imageECR}`);
+            exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
+                    if (stderr){ core.setFailed(`docker push has failed: ${stderr}`); }
+                    if (error){ core.setFailed(`docker push has failed: ${error}`); }
+                });
+            });
 
-        if (error){
-            core.setFailed(`docker login has failed: ${error}`);
-        }
-    });
+        let imageTag = process.env.GITHUB_SHA.substring(0, 8)
+        let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
-    let imageTag = process.env.GITHUB_SHA.substring(0, 8)
-    let imageECR = `${endPoint}/${registryName}:${imageTag}`
+        core.setOutput("image", imageECR);
+        core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[1])
 
-    console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
-    exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
-        if (stderr){
-            core.setFailed(`docker tag has failed: ${stderr}`);
-        }
-
-        if (error){
-            core.setFailed(`docker tag has failed: ${error}`);
-        }
-    });
-
-    console.log(`docker push ${imageECR}`);
-    exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
-        if (stderr){
-            core.setFailed(`docker push has failed: ${stderr}`);
-        }
-
-        if (error){
-            core.setFailed(`docker push has failed: ${error}`);
-        }
-    });
-
-    core.setOutput("image", imageECR);
-
-    core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[1])
+      });   
 
 }
 
