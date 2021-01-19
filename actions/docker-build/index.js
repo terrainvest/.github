@@ -28,6 +28,9 @@ async function run(){
     aws.config.credentials = credentials;
     aws.config.update({region: 'us-east-1'})
 
+    console.log(`PROFILE: ${awsProfile.toUpperCase()}`)
+    console.log(`ID ACCOUNT: ${process.env[awsProfile.toUpperCase()]}`)
+
     var params = {
         registryIds: [
             process.env[awsProfile.toUpperCase()]
