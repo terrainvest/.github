@@ -1,14 +1,20 @@
 const core = require('@actions/core');
 const aws = require('aws-sdk');
 const util = require('util');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const fs = require("fs");
 
 const exec = require('child_process').exec;
 
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
-console.log(process.env)
+if (fs.existsSync('./.env')) {
+    console.log("EXISTE .ENV")
+}
+else {
+    core.setFailed(`NAO EXISTE ENV`);
+}
 
 async function run(){
 
