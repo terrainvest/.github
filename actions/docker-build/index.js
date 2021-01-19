@@ -18,7 +18,7 @@ async function run(){
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){ core.setFailed(`docker build has failed: ${stderr}`); }
         if (error){ core.setFailed(`docker build has failed: ${error}`); }
-        console.log(`Response: ${stdout}`)
+        console.log(`Response Build: ${stdout}`)
     });
 
     let credentials = new aws.SharedIniFileCredentials({profile: awsProfile});
@@ -41,8 +41,9 @@ async function run(){
 
         console.log(`Getting login of ecr: ${endPoint}`);
         exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
-            if (stderr){ core.setFailed(`docker login has failed: ${stderr}`); }
-            if (error){ core.setFailed(`docker login has failed: ${error}`); }
+            if (stderr && !stderr.includes("WARNING!")){ core.setFailed(`docker login has failed: ${stderr}`); }
+            if (error && !error.includes("WARNING!")){ core.setFailed(`docker login has failed: ${error}`); }
+            console.log(`Response Login: ${stdout}`)
 
             console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
             exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
