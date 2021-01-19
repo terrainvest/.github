@@ -7,13 +7,12 @@ const exec = require('child_process').exec;
 
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
-const imageTag = core.getInput('tag');
 
 console.log(process.env)
 
 async function run(){
 
-    dotenv.config()
+    dotenv.config({path:'./.env'})
 
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
@@ -60,6 +59,8 @@ async function run(){
         }
     });
 
+    let imageTag = process.env.GITHUB_SHA.substring(0, 8)
+
     let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
     exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
@@ -83,6 +84,8 @@ async function run(){
     });
 
     core.setOutput("image", imageECR);
+
+    core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[1])
 
 }
 

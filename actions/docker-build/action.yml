@@ -6,13 +6,12 @@ inputs:
     required: true
   registry:
     description: 'registry'
-    required: true
-  tag:
-    description: 'tag by git commit'
-    required: true
+    required: true  
 outputs:
   image:
     description: 'image with tag'
+  repository:
+    description: 'repository name'
 runs:
   using: 'node12'
   main: 'index.js'

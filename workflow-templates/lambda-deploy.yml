@@ -76,7 +76,6 @@ jobs:
         with:
           aws_profile: ${{ env.WORKSPACE }} 
           registry: ${{ secrets.REGISTRY_NAME }}
-          tag: " echo ${GITHUB_SHA} | cut -c1-8 "
 
       - name: Lambda Update Function
-        run: aws lambda update-function-code --function-name "$(echo $GITHUB_REPOSITORY | awk -F / '{print $2}')" --image-uri ${{ steps.docker-build.outputs.image }}
+        run: aws lambda update-function-code --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
