@@ -9,6 +9,8 @@ const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 const imageTag = core.getInput('tag');
 
+console.log(process.env)
+
 async function run(){
 
     dotenv.config()

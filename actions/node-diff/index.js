@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const currentCommit = core.getInput('current_commit');
 const rootDir = core.getInput('rootDir');  
