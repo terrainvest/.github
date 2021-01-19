@@ -11,13 +11,13 @@ const awsProfile = core.getInput('aws_profile');
 
 async function run(){
 
-    dotenv.config({path: `${__dirname}/.github/.env.lambda` });
+    dotenv.config({path: `${github.workspace}/.github/.env.lambda` });
 
-    fs.readdirSync(`${__dirname}/.github`).forEach(file => {
+    fs.readdirSync(`${github.workspace}/.github`).forEach(file => {
         console.log(file);
       });
 
-    if(fs.existsSync(`${__dirname}/.github`)){
+    if(fs.existsSync(`${github.workspace}/.github/.env.lambda`)){
         console.log("EXISTE");
     }
     else{
