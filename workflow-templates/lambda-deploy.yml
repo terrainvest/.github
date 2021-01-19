@@ -74,8 +74,7 @@ jobs:
         id: docker-build
         uses: terrainvest/.github/actions/docker-build@master        
         with:
-          aws_profile: ${{ env.WORKSPACE }} 
-          registry: ${{ secrets.REGISTRY_NAME }}
+          aws_profile: ${{ env.WORKSPACE }}           
 
       - name: Lambda Update Function
         run: aws lambda update-function-code --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}

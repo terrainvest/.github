@@ -3,9 +3,6 @@ description: 'build docker file'
 inputs:
   aws_profile:
     description: 'Profile aws'
-    required: true
-  registry:
-    description: 'registry'
     required: true  
 outputs:
   image:

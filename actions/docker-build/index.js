@@ -7,11 +7,12 @@ const github = require('@actions/github');
 const exec = require('child_process').exec;
 
 const awsProfile = core.getInput('aws_profile');
-const registryName = core.getInput('registry');
 
 async function run(){
 
-    dotenv.config({path:`.github/.env.account`})
+    dotenv.config({path:`/.github/.env.lambda`});
+
+    const registryName = process.env["REGISTRY"];
 
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
@@ -64,11 +65,11 @@ async function run(){
 
     exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
         if (stderr){
-            core.setFailed(`docker login has failed: ${stderr}`);
+            core.setFailed(`docker tag has failed: ${stderr}`);
         }
 
         if (error){
-            core.setFailed(`docker login has failed: ${error}`);
+            core.setFailed(`docker tag has failed: ${error}`);
         }
     });
 
