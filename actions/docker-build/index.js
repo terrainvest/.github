@@ -11,10 +11,9 @@ const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
 console.log(`ACTION PATH + ENV: ${process.env.GITHUB_WORKSPACE}/.env`)
-console.log(`ACTION PATH + ENV: ${process.env.GITHUB_ACTION_REPOSITORY}/.env`)
-console.log(`ACTION PATH + ENV: ${process.env.RUNNER_WORKSPACE}/.env`)
+console.log(`CURRENT DIR: ${process.cwd()}`)
 
-if (fs.existsSync(`${process.env.RUNNER_WORKSPACE}/.env`) || fs.existsSync(`${process.env.GITHUB_ACTION_REPOSITORY}/.env`) || fs.existsSync(`${process.env.GITHUB_WORKSPACE}/.env`)) {
+if (fs.existsSync(`${process.env.RUNNER_WORKSPACE}/.env`)) {
     console.log("EXISTE .ENV")
 }
 else {
