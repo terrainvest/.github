@@ -10,7 +10,7 @@ const awsProfile = core.getInput('aws_profile');
 
 async function run(){
 
-    dotenv.config({path:`/.github/.env.lambda`});
+    dotenv.config({path:`${__dirname}/.github/.env.lambda`});
 
     console.log(process.env);
 
