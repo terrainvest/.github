@@ -1,3 +1,5 @@
+'use strict';
+
 const core = require('@actions/core');
 const aws = require('aws-sdk');
 const dotenv = require('dotenv');
@@ -16,6 +18,7 @@ async function run(){
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){ core.setFailed(`docker build has failed: ${stderr}`); }
         if (error){ core.setFailed(`docker build has failed: ${error}`); }
+        console.log(`Response: ${stdout}`)
     });
 
     let credentials = new aws.SharedIniFileCredentials({profile: awsProfile});
@@ -33,7 +36,7 @@ async function run(){
     ecr.getAuthorizationToken(params, function(err, data) {
         if (err) { core.setFailed(`get auth token failed: ${err}`); }
         
-        let authToken = data.authorizationData[0].authorizationToken
+        let authToken = Buffer.from(data.authorizationData[0].authorizationToken, 'base64').toString('ascii').replace("AWS:", "")
         let endPoint = data.authorizationData[0].proxyEndpoint.replace("https://", "")        
 
         console.log(`Getting login of ecr: ${endPoint}`);
