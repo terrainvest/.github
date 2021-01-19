@@ -1,9 +1,6 @@
 const core = require('@actions/core');
 const aws = require('aws-sdk');
-const util = require('util');
 const dotenv = require('dotenv');
-const github = require('@actions/github');
-const fs = require('fs');
 
 const exec = require('child_process').exec;
 
@@ -13,21 +10,9 @@ async function run(){
 
     dotenv.config({path: `${process.env.GITHUB_WORKSPACE}/.github/.env.lambda` });
 
-    fs.readdirSync(`${process.env.GITHUB_WORKSPACE}/.github`).forEach(file => {
-        console.log(file);
-      });
-
-    if(fs.existsSync(`${process.env.GITHUB_WORKSPACE}/.github/.env.lambda`)){
-        console.log("EXISTE");
-    }
-    else{
-        console.log("N EXISTE");
-    }
-
     const registryName = process.env["REGISTRY"];
 
-    console.log(`Registry Name: ${registryName}`);
-
+    console.log(`Running docker build, image: ${registryName}`);
     exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr){
             core.setFailed(`docker build has failed: ${stderr}`);
@@ -41,10 +26,7 @@ async function run(){
     let credentials = new aws.SharedIniFileCredentials({profile: awsProfile});
     aws.config.credentials = credentials;
     aws.config.update({region: 'us-east-1'})
-
-    console.log(`PROFILE: ${awsProfile.toUpperCase()}`)
-    console.log(`ID ACCOUNT: ${process.env[awsProfile.toUpperCase()]}`)
-
+    
     var params = {
         registryIds: [
             process.env[awsProfile.toUpperCase()]
@@ -66,6 +48,7 @@ async function run(){
 
       });
 
+    console.log(`Getting login of ecr: ${endPoint}`);
     exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
         if (stderr){
             core.setFailed(`docker login has failed: ${stderr}`);
@@ -77,9 +60,9 @@ async function run(){
     });
 
     let imageTag = process.env.GITHUB_SHA.substring(0, 8)
-
     let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
+    console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
     exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
         if (stderr){
             core.setFailed(`docker tag has failed: ${stderr}`);
@@ -90,6 +73,7 @@ async function run(){
         }
     });
 
+    console.log(`docker push ${imageECR}`);
     exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
         if (stderr){
             core.setFailed(`docker push has failed: ${stderr}`);
