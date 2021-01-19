@@ -10,7 +10,7 @@ const exec = require('child_process').exec;
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
-console.log(`${github.action_path}/.env`)
+console.log(`ACTION PATH + ENV: ${github.action_path}/.env`)
 
 if (fs.existsSync(`${github.action_path}/.env`)) {
     console.log("EXISTE .ENV")
