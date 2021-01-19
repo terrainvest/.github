@@ -1,0 +1,18 @@
+name: 'Docker-Build'
+description: 'build docker file'
+inputs:
+  aws_profile:
+    description: 'Profile aws'
+    required: true
+  registry:
+    description: 'registry'
+    required: true
+  tag:
+    description: 'tag by git commit'
+    required: true
+outputs:
+  image:
+    description: 'image with tag'
+runs:
+  using: 'node12'
+  main: 'index.js'
