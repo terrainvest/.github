@@ -9,7 +9,7 @@ const exec = require('child_process').exec;
 const awsProfile = core.getInput('aws_profile');
 const registryName = core.getInput('registry');
 
-if (fs.existsSync('./.env')) {
+if (fs.existsSync('.env')) {
     console.log("EXISTE .ENV")
 }
 else {
