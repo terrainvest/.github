@@ -25,6 +25,7 @@ async function run(){
 
     let credentials = new aws.SharedIniFileCredentials({profile: awsProfile});
     aws.config.credentials = credentials;
+    aws.config.update({region: 'us-east-1'})
 
     var params = {
         registryIds: [

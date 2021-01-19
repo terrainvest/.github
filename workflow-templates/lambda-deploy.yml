@@ -1,0 +1,82 @@
+name: Lambda-WorkFlow
+
+on:
+  push:
+    branches:
+     - master
+
+env:  
+  GITHUB_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
+
+jobs:
+
+  nodeBuild:
+    runs-on: ubuntu-latest
+    name: Node Build
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+    
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.3'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:    
+          path: |
+            '**/node_modules'
+            '~/.npm'
+          key: node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-${{ hashFiles('package-lock.json') }}
+            node-
+      - name: NPM Install
+        run: npm install
+        
+      - name: NPM Build
+        run: npm run build
+
+
+  deployLambda:
+    runs-on: ubuntu-latest
+    name: Deploy Lambda
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Profile
+        run: |
+          branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
+          if [[ $branch_name == *"ma"* ]]; then profile="prd"
+          elif [[ $branch_name == *"hom"* ]]; then profile="hml"
+          else profile="dev"
+          fi
+          echo "WORKSPACE=$profile" >> $GITHUB_ENV
+
+      - name: Setup AWS Profile
+        uses: terrainvest/.github/actions/setup-aws-py@master
+        with:
+          aws_profile: ${{ env.WORKSPACE }} 
+          root_path: ~/
+        env:        
+          ORG_TF_AWS_KEY_ID: ${{ secrets.ORG_TF_AWS_KEY_ID }}
+          ORG_TF_AWS_SECRET_KEY: ${{ secrets.ORG_TF_AWS_SECRET_KEY }}
+          HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
+          HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
+          PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
+          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
+
+      - name: Docker Build and Push
+        id: docker-build
+        uses: terrainvest/.github/actions/docker-build@master        
+        with:
+          aws_profile: ${{ env.WORKSPACE }} 
+          registry: ${{ secrets.REGISTRY_NAME }}
+          tag: " echo ${GITHUB_SHA} | cut -c1-8 "
+
+      - name: Lambda Update Function
+        run: aws lambda update-function-code --function-name "$(echo $GITHUB_REPOSITORY | awk -F / '{print $2}')" --image-uri ${{ steps.docker-build.outputs.image }}
