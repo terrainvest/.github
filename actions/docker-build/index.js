@@ -111,6 +111,7 @@ async function dockerTagAndPush(endPoint){
 try{
     let result = await dockerBuild();
     console.log(`Result: ${result}`);
+
 } catch(e){
     console.error(e) 
 }
@@ -127,5 +128,3 @@ try{
     //        }
 //
     //    });
-
-}
