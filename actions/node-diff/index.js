@@ -29,8 +29,6 @@ async function getPath() {
   };
 };
 
-const exec = util.promisify(require('child_process').exec);
-
 getPath()
   .then(
     arrayPath => setOutput(arrayPath)
