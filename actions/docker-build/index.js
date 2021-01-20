@@ -3,6 +3,7 @@
 const core = require('@actions/core');
 const aws = require('aws-sdk');
 const dotenv = require('dotenv');
+//const util = require('util');
 const exec = require('child_process').exec;
 
 dotenv.config({path: `${process.env.GITHUB_WORKSPACE}/.github/.env.lambda` });
@@ -112,16 +113,26 @@ module.exports = dockerBuild;
 
 if (require.main === module) {
 
-    dockerBuild()
-        .then(response => {
-            console.log(response);
-            dockerLogin();
-        })
-        .catch(e => {
-            if(!e.toLowerCase().includes("warning")){
-                core.setFailed(`Error docker build: ${e}`)
-            }
+    try{
 
-        });
+        let result = await dockerBuild();
+        console.log(`Result: ${result}`);
+
+    } catch(e){
+       console.error(e) 
+    }
+    
+
+    //dockerBuild()
+    //    .then(response => {
+    //        console.log(response);
+    //        dockerLogin();
+    //    })
+    //    .catch(e => {
+    //        if(!e.toLowerCase().includes("warning")){
+    //            core.setFailed(`Error docker build: ${e}`)
+    //        }
+//
+    //    });
 
 }
