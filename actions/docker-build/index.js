@@ -18,8 +18,7 @@ async function dockerBuild(){
         exec(`docker build . --file ${process.env.GITHUB_WORKSPACE}/Dockerfile --tag ${registryName}`, (error, stdout, stderr) => {
         if (error){             
             console.error(`Error build: ${error}`)
-        }        
-        console.log(`Response build: ${stdout}`);
+        }               
         resolve(stdout);
     });
         
@@ -52,12 +51,8 @@ async function dockerLogin(){
 
         console.log(`Getting login of ecr: ${endPoint}`);
         exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
-            if (stderr || error){ 
-                let responseError = stderr ? stderr : error;
-                if(!responseError.toLowerCase().includes("warning")){
-                    core.setFailed(`Error at docker login: ${responseError}`);
-                    return;
-                }
+            if (error){ 
+                console.error(`Error login: ${error}`)
             }            
             console.log(`Response Login: ${stdout}`)
 
@@ -82,12 +77,8 @@ async function dockerTagAndPush(endPoint){
 
         console.log(`docker push ${imageECR}`);
         exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
-            if (stderr || error){ 
-                let responseError = stderr ? stderr : error;
-                if(!responseError.toLowerCase().includes("warning")){
-                    core.setFailed(`Error at docker push: ${responseError}`);
-                    return;
-                }
+            if (error){ 
+                console.error(`Error push: ${error}`)
             } 
             
             console.log(`Response push: ${stdout}`)
@@ -104,29 +95,10 @@ async function dockerTagAndPush(endPoint){
 try{
     let result = dockerBuild();
     result.then(response => {
-        console.log(`Result Promise: ${response}`)
-        exec(`docker images`, (error, stdout, stderr) => {
-            if (error){             
-                console.error(`DOCKER IMAGES ERROR: ${error}`)
-            }        
-            console.log(`Docker Images: ${stdout}`);            
-        });
-    })
-    console.log(`Result: ${result}`);
+        console.log(`Response Build: ${response}`)
+        dockerLogin();
+    })    
 
 } catch(e){
     console.error(e) 
 }
-    
-
-    //dockerBuild()
-    //    .then(response => {
-    //        console.log(response);
-    //        dockerLogin();
-    //    })
-    //    .catch(e => {
-    //        if(!e.toLowerCase().includes("warning")){
-    //            core.setFailed(`Error docker build: ${e}`)
-    //        }
-//
-    //    });
