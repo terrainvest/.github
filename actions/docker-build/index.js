@@ -12,9 +12,9 @@ const imageTag = process.env.GITHUB_SHA.substring(0, 8)
 
 async function dockerBuild(){        
 
-    console.log(`Running docker build, image: ${registryName}:${imageTag}`);
+    console.log(`Running docker build, image: ${registryName}`);
     return new Promise( (resolve, reject) => {
-        exec(`docker build -t ${registryName}:${imageTag} .`, (error, stdout, stderr) => {
+        exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
             if(!responseError.toLowerCase().includes("warning")){
@@ -23,7 +23,7 @@ async function dockerBuild(){
             }
             
         }        
-        resolve(stdout);
+        console.log(`Response build: ${stdout}`)
         return stdout;
     });
         
@@ -77,8 +77,8 @@ async function dockerTagAndPush(endPoint){
 
     let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
-    console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
-    exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
+    console.log(`docker tag ${registryName} ${imageECR}`);
+    exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
             
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
@@ -114,8 +114,7 @@ module.exports = dockerBuild;
 if (require.main === module) {
 
     dockerBuild()
-        .then(function(response) {
-            console.log(`Response docker build: ${response}`);
+        .then(function(response) {            
             dockerLogin();
         })
         .catch(function(e){
