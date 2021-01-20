@@ -11,14 +11,13 @@ const registryName = process.env["REGISTRY"];
 const awsProfile = core.getInput('aws_profile');
 const imageTag = process.env.GITHUB_SHA.substring(0, 8)
 
-function dockerBuild(){
+async function dockerBuild(){
 
-    console.log(`Running docker build, image: ${registryName}`);
+    //console.log(`Running docker build, image: ${registryName}`);
     return new Promise( (resolve, reject) => {
         exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
-        if (stderr || error){ 
-            let responseError = stderr ? stderr : error;
-            if(!responseError.toLowerCase().includes("warning")){
+        if (error){             
+            if(!error.toLowerCase().includes("warning")){
                 console.log(`Error build: ${responseError}`)                
             }
             
