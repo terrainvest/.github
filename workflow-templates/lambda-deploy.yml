@@ -4,6 +4,8 @@ on:
   push:
     branches:
      - master
+     - homolog
+     - develop
 
 env:  
   GITHUB_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
