@@ -15,7 +15,7 @@ async function dockerBuild(){
 
     console.log(`Running docker build, image: ${registryName}`);
     return new Promise( (resolve, reject) => {
-        exec(`docker build . --file Dockerfile --tag ${registryName}`, (error, stdout, stderr) => {
+        exec(`docker build . --file ${process.env.GITHUB_WORKSPACE}/Dockerfile --tag ${registryName}`, (error, stdout, stderr) => {
         if (error){             
             console.error(`Error build: ${error}`)
         }        
@@ -109,8 +109,7 @@ try{
             if (error){             
                 console.error(`DOCKER IMAGES ERROR: ${error}`)
             }        
-            console.log(`Docker Images: ${stdout}`);
-            resolve(stdout);
+            console.log(`Docker Images: ${stdout}`);            
         });
     })
     console.log(`Result: ${result}`);
