@@ -12,9 +12,9 @@ const imageTag = process.env.GITHUB_SHA.substring(0, 8)
 
 async function dockerBuild(){        
 
-    console.log(`Running sudo docker build, image: ${registryName}`);
+    console.log(`Running docker build, image: ${registryName}:${imageTag}`);
     return new Promise( (resolve, reject) => {
-        exec(`sudo docker build -t ${registryName}:${imageTag} .`, (error, stdout, stderr) => {
+        exec(`docker build -t ${registryName}:${imageTag} .`, (error, stdout, stderr) => {
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
             if(!responseError.toLowerCase().includes("warning")){
@@ -24,6 +24,7 @@ async function dockerBuild(){
             
         }        
         resolve(stdout);
+        return stdout;
     });
         
     });
@@ -54,7 +55,7 @@ async function dockerLogin(){
         let endPoint = data.authorizationData[0].proxyEndpoint.replace("https://", "");
 
         console.log(`Getting login of ecr: ${endPoint}`);
-        exec(`sudo docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
+        exec(`docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
             if (stderr || error){ 
                 let responseError = stderr ? stderr : error;
                 if(!responseError.toLowerCase().includes("warning")){
@@ -76,8 +77,8 @@ async function dockerTagAndPush(endPoint){
 
     let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
-    console.log(`sudo docker tag ${registryName}:${imageTag} ${imageECR}`);
-    exec(`sudo docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
+    console.log(`docker tag ${registryName}:${imageTag} ${imageECR}`);
+    exec(`docker tag ${registryName}:${imageTag} ${imageECR}`, (error, stdout, stderr) => {
             
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
@@ -87,8 +88,8 @@ async function dockerTagAndPush(endPoint){
             }
         }   
 
-        console.log(`sudo docker push ${imageECR}`);
-        exec(`sudo docker push ${imageECR}`, (error, stdout, stderr) => {
+        console.log(`docker push ${imageECR}`);
+        exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
             if (stderr || error){ 
                 let responseError = stderr ? stderr : error;
                 if(!responseError.toLowerCase().includes("warning")){
