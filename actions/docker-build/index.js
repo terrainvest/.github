@@ -17,8 +17,11 @@ async function dockerBuild(){
         exec(`sudo docker build -t ${registryName}:${imageTag} .`, (error, stdout, stderr) => {
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
-            reject(responseError);
-            return;
+            if(!responseError.toLowerCase().includes("warning")){
+                reject(responseError);
+                return;
+            }
+            
         }        
         resolve(stdout);
     });
@@ -54,8 +57,10 @@ async function dockerLogin(){
         exec(`sudo docker login -u AWS -p ${authToken} ${endPoint}`, (error, stdout, stderr) => {
             if (stderr || error){ 
                 let responseError = stderr ? stderr : error;
-                core.setFailed(`Error at docker login: ${responseError}`);
-                return;
+                if(!responseError.toLowerCase().includes("warning")){
+                    core.setFailed(`Error at docker login: ${responseError}`);
+                    return;
+                }
             }            
             console.log(`Response Login: ${stdout}`)
 
@@ -76,16 +81,20 @@ async function dockerTagAndPush(){
             
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
-            core.setFailed(`Error at docker tag: ${responseError}`);
-            return;
+            if(!responseError.toLowerCase().includes("warning")){
+                core.setFailed(`Error at docker tag: ${responseError}`);
+                return;
+            }
         }   
 
         console.log(`sudo docker push ${imageECR}`);
         exec(`sudo docker push ${imageECR}`, (error, stdout, stderr) => {
             if (stderr || error){ 
                 let responseError = stderr ? stderr : error;
-                core.setFailed(`Error at docker push: ${responseError}`);
-                return;
+                if(!responseError.toLowerCase().includes("warning")){
+                    core.setFailed(`Error at docker push: ${responseError}`);
+                    return;
+                }
             } 
             
             console.log(`Response push: ${stdout}`)
@@ -108,6 +117,11 @@ if (require.main === module) {
             console.log(`Response docker build: ${response}`);
             dockerLogin();
         })
-        .catch(e => core.setFailed(`Error docker build: ${e}`))
+        .catch(function(e){
+            if(!e.toLowerCase().includes("warning")){
+                core.setFailed(`Error docker build: ${e}`)
+            }
+
+        });
 
 }
