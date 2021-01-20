@@ -15,7 +15,7 @@ async function dockerBuild(){
 
     console.log(`Running docker build, image: ${registryName}`);
     return new Promise( (resolve, reject) => {
-        exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
+        exec(`docker build . --file Dockerfile --tag ${registryName}`, (error, stdout, stderr) => {
         if (error){             
             console.error(`Error build: ${error}`)
         }        
