@@ -75,16 +75,7 @@ jobs:
           HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
           HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
           PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
-          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Setup Docker
-        uses: docker/setup-buildx-action@v1
-        id: buildx
-        with:
-          install: true     
+          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}      
 
       - name: Get Dist Folder
         uses: actions/download-artifact@master
@@ -96,7 +87,7 @@ jobs:
         id: docker-build
         uses: terrainvest/.github/actions/docker-build@master        
         with:
-          aws_profile: ${{ env.WORKSPACE }}           
+          aws_profile: ${{ env.WORKSPACE }}
 
       - name: Lambda Update Function
-        run: aws lambda update-function-code --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
+        run: aws lambda update-function-code --region us-east-1 --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
