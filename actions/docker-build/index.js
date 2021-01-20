@@ -7,9 +7,10 @@ const dotenv = require('dotenv');
 const exec = require('child_process').exec;
 
 dotenv.config({path: `${process.env.GITHUB_WORKSPACE}/.github/.env.lambda` });
-const registryName = process.env["REGISTRY"];
 const awsProfile = core.getInput('aws_profile');
 const imageTag = process.env.GITHUB_SHA.substring(0, 8)
+
+const registryName = awsProfile === "prd" ? process.env["REGISTRY"] : `${process.env["REGISTRY"]}.${awsProfile}`;
 
 async function dockerBuild(){
 
@@ -88,7 +89,11 @@ async function dockerTagAndPush(endPoint){
     });    
 
     core.setOutput("image", imageECR);
-    core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[1])
+
+    let repository = process.env.GITHUB_REPOSITORY.split("/")[1];
+    repository = awsProfile === "prd" ? repository : `${repository}-${awsProfile}`
+
+    core.setOutput("repository", repository)
 
 }
 

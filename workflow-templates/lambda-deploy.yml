@@ -6,6 +6,9 @@ on:
      - master
      - homolog
      - develop
+    paths-ignore:
+     - 'terraform/**'
+     - '.github/**'
 
 env:  
   GITHUB_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
