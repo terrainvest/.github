@@ -13,14 +13,11 @@ const imageTag = process.env.GITHUB_SHA.substring(0, 8)
 
 async function dockerBuild(){
 
-    //console.log(`Running docker build, image: ${registryName}`);
+    console.log(`Running docker build, image: ${registryName}`);
     return new Promise( (resolve, reject) => {
         exec(`docker build -t ${registryName} .`, (error, stdout, stderr) => {
         if (error){             
-            if(!error.toLowerCase().includes("warning")){
-                console.log(`Error build: ${responseError}`)                
-            }
-            
+            console.error(`Error build: ${error}`)
         }        
         console.log(`Response build: ${stdout}`);
         resolve(stdout);
@@ -79,12 +76,8 @@ async function dockerTagAndPush(endPoint){
     console.log(`docker tag ${registryName} ${imageECR}`);
     exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
             
-        if (stderr || error){ 
-            let responseError = stderr ? stderr : error;
-            if(!responseError.toLowerCase().includes("warning")){
-                core.setFailed(`Error at docker tag: ${responseError}`);
-                return;
-            }
+        if (error){             
+                console.error(`Error at docker tag: ${responseError}`);
         }   
 
         console.log(`docker push ${imageECR}`);
@@ -109,7 +102,17 @@ async function dockerTagAndPush(endPoint){
 }
 
 try{
-    let result = await dockerBuild();
+    let result = dockerBuild();
+    result.then(response => {
+        console.log(`Result Promise: ${response}`)
+        exec(`docker images`, (error, stdout, stderr) => {
+            if (error){             
+                console.error(`DOCKER IMAGES ERROR: ${error}`)
+            }        
+            console.log(`Docker Images: ${stdout}`);
+            resolve(stdout);
+        });
+    })
     console.log(`Result: ${result}`);
 
 } catch(e){
