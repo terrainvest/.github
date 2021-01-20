@@ -18,13 +18,12 @@ async function dockerBuild(){
         if (stderr || error){ 
             let responseError = stderr ? stderr : error;
             if(!responseError.toLowerCase().includes("warning")){
-                reject(responseError);
-                return;
+                console.log(`Error build: ${responseError}`)                
             }
             
         }        
-        console.log(`Response build: ${stdout}`)
-        return stdout;
+        console.log(`Response build: ${stdout}`);
+        resolve(stdout);
     });
         
     });
@@ -114,10 +113,11 @@ module.exports = dockerBuild;
 if (require.main === module) {
 
     dockerBuild()
-        .then(function(response) {            
+        .then(response => {
+            console.log(response);
             dockerLogin();
         })
-        .catch(function(e){
+        .catch(e => {
             if(!e.toLowerCase().includes("warning")){
                 core.setFailed(`Error docker build: ${e}`)
             }
