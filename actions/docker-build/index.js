@@ -108,18 +108,14 @@ async function dockerTagAndPush(endPoint){
 
 }
 
-module.exports = dockerBuild;
+try{
 
-if (require.main === module) {
+    let result = await dockerBuild();
+    console.log(`Result: ${result}`);
 
-    try{
-
-        let result = await dockerBuild();
-        console.log(`Result: ${result}`);
-
-    } catch(e){
-       console.error(e) 
-    }
+} catch(e){
+    console.error(e) 
+}
     
 
     //dockerBuild()
