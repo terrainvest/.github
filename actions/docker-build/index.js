@@ -88,7 +88,7 @@ async function dockerTagAndPush(endPoint){
     });    
 
     core.setOutput("image", imageECR);
-    core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[2])
+    core.setOutput("repository", process.env.GITHUB_REPOSITORY.split("/")[1])
 
 }
 
