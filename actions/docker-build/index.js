@@ -64,7 +64,7 @@ async function dockerLogin(){
             }            
             console.log(`Response Login: ${stdout}`)
 
-            dockerTagAndPush();
+            dockerTagAndPush(endPoint);
 
         });
 
@@ -72,7 +72,7 @@ async function dockerLogin(){
 
 }
 
-async function dockerTagAndPush(){   
+async function dockerTagAndPush(endPoint){   
 
     let imageECR = `${endPoint}/${registryName}:${imageTag}`
 
