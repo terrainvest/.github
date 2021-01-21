@@ -80,7 +80,7 @@ async function dockerTag(endPoint, imageTag){
                 console.error(`Error at docker tag: ${responseError}`);
             }
 
-            resolve(imageECR)
+            resolve(stdout)
 
         })
 
