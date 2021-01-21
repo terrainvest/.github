@@ -41,7 +41,7 @@ getPath()
 
     const promises = arrayPath.map(async (item) => {
     
-      if(item.includes(".tf")){
+      if(item.match(/\b.tf\b/)){
         
         itemArray = item.split('/');     
   
