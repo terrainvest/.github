@@ -12,11 +12,9 @@ on:
   pull_request:
     branches: 
       - master
-    paths:
-      - 'terraform/org/**'
+    paths:      
       - 'terraform/dev/**'
-      - 'terraform/hml/**'
-      - 'terraform/prd/**'
+      - 'terraform/hml/**'      
 
 env:
   TF_VERSION: 0.14.4
