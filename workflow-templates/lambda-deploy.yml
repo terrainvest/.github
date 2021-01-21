@@ -55,18 +55,23 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Lambda
     needs: nodeBuild
+    outputs:
+      job_context: ${{ toJSON(job) }}
+      workspace: ${{steps.get-workspace.outputs.WORKSPACE}}
     steps:
 
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Get Profile
+        id: get-workspace
         run: |
           branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
           if [[ $branch_name == *"ma"* ]]; then profile="prd"
           elif [[ $branch_name == *"hom"* ]]; then profile="hml"
           else profile="dev"
           fi
+          echo "::set-output name=WORKSPACE::$profile"
           echo "WORKSPACE=$profile" >> $GITHUB_ENV
 
       - name: Setup AWS Profile
@@ -96,3 +101,39 @@ jobs:
 
       - name: Lambda Update Function
         run: aws lambda update-function-code --region us-east-1 --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
+
+  if_failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [nodeBuild, deployLambda]
+    env:
+      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+    if: failure()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.ACT_WEBHOOK }}
+          overwrite: "{title: `Workflow has failed`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
+
+  if_success:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [nodeBuild, deployLambda]
+    env:
+      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+    if: success()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.ACT_WEBHOOK }}
+          overwrite: "{title: `Workflow has succeeded`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}

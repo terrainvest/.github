@@ -54,6 +54,9 @@ jobs:
       matrix: ${{fromJson(needs.matrixBuilder.outputs.path)}}
     runs-on: ubuntu-latest
     name: Terraform Job at ${{matrix.path}}
+    outputs:
+      workspace: ${{steps.get-workspace.outputs.WORKSPACE}}
+      job_context: ${{ toJSON(job) }}
     defaults:
       run:
         shell: bash
@@ -122,7 +125,7 @@ jobs:
         id: plan
         run: |
           terraform plan -no-color -var='aws_profile=${{ env.WORKSPACE }}' -out=plan-file.tfplan
-        continue-on-error: true   
+        continue-on-error: false   
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
@@ -154,7 +157,7 @@ jobs:
         run: echo "::error::Error at planning terraform in ${{env.WORKSPACE}}"
 
       - name: Terraform Apply
-        if: steps.plan.outcome == 'success'
+        if: steps.plan.outcome == 'success' && github.event_name == 'push'
         id: apply
         run: |
           echo "::debug::Applying terraform in ${{env.WORKSPACE}}"
@@ -162,3 +165,39 @@ jobs:
 
       - name: Delete AWS Credential
         run: rm -rf ~/.aws
+    
+  if_failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [matrixBuilder, terraformJob]
+    env:
+      WORKSPACE: ${{needs.terraformJob.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.terraformJob.outputs.job_context}}
+    if: failure()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.TF_WEBHOOK }}
+          overwrite: "{title: `Terraform workflow has failed`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
+
+  if_success:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [matrixBuilder, terraformJob]
+    env:
+      WORKSPACE: ${{needs.terraformJob.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.terraformJob.outputs.job_context}}
+    if: success()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.TF_WEBHOOK }}
+          overwrite: "{title: `Terraform workflow has succeeded`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
