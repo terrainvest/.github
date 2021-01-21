@@ -77,7 +77,7 @@ async function dockerTag(endPoint, imageTag){
         exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
 
             if (error){             
-                console.error(`Error at docker tag: ${responseError}`);
+                console.error(`Error at docker tag: ${error}`);
             }
 
             resolve(stdout)
