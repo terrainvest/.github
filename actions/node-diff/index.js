@@ -41,27 +41,31 @@ getPath()
 
     const promises = arrayPath.map(async (item) => {
     
-      itemArray = item.split('/');     
+      if(item.includes(".tf")){
+        
+        itemArray = item.split('/');     
+  
+        if(itemArray[0] === rootDir){
+        
+          let pathString = rootDir + "/";
+  
+          for (let i = 1; i < itemArray.length - 1; i++) {          
+            pathString += itemArray[i] + "/";
+  
+            if(pathString.split('/').length == itemArray.length){
+              if(!objPath['path'].includes(pathString)){
+                objPath['path'].push(pathString)
+              }            
+            }          
+  
+          }               
+  
+        } else{
+          core.setFailed("rootDir not found in current repo!");
+          throw new Error("rootDir not found in current repo!");
+        } 
 
-      if(itemArray[0] === rootDir){
-
-        let pathString = rootDir + "/";
-
-        for (let i = 1; i < itemArray.length - 1; i++) {          
-          pathString += itemArray[i] + "/";
-
-          if(pathString.split('/').length == itemArray.length){
-            if(!objPath['path'].includes(pathString)){
-              objPath['path'].push(pathString)
-            }            
-          }          
-
-        }               
-
-      } else{
-        core.setFailed("rootDir not found in current repo!");
-        throw new Error("rootDir not found in current repo!");
-      }          
+      }         
 
     });
     
