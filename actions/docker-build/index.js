@@ -57,7 +57,9 @@ async function dockerLogin(){
             }            
             console.log(`Response Login: ${stdout}`)
 
-            dockerTagAndPush(endPoint);
+            let imageECR = `${endPoint}/${registryName}`
+
+            Promise.all([dockerTag(endPoint, imageTag), dockerTag(endPoint, "latest")]).then(values => dockerPush(imageECR));
 
         });
 
@@ -65,18 +67,30 @@ async function dockerLogin(){
 
 }
 
-async function dockerTagAndPush(endPoint){   
+async function dockerTag(endPoint, imageTag){   
 
-    let imageECR = `${endPoint}/${registryName}:${imageTag}`
+    return new Promise( (resolve) => {
 
-    console.log(`docker tag ${registryName} ${imageECR}`);
-    exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
-            
-        if (error){             
+        let imageECR = `${endPoint}/${registryName}:${imageTag}`
+        console.log(`docker tag ${registryName} ${imageECR}`);
+
+        exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
+
+            if (error){             
                 console.error(`Error at docker tag: ${responseError}`);
-        }   
+            }
 
-        console.log(`docker push ${imageECR}`);
+            resolve(imageECR)
+
+        })
+
+    })    
+
+}
+
+async function dockerPush(imageEcr){
+    
+    console.log(`docker push ${imageECR}`);
         exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
             if (error){ 
                 console.error(`Error push: ${error}`)
@@ -85,8 +99,6 @@ async function dockerTagAndPush(endPoint){
             console.log(`Response push: ${stdout}`)
 
         });
-
-    });    
 
     core.setOutput("image", imageECR);
 
