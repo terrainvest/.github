@@ -95,6 +95,11 @@ jobs:
         with:
           path: ${{ env.WD }}
         
+      - name: Configure Git Credentials
+        uses: fusion-engineering/setup-git-credentials@v2
+        with:
+          credentials: https://murilopacsonov:${{ env.GITHUB_AUTH_TOKEN }}@github.com
+
       - name: Setup Terraform backend
         run: |
           echo 'profile = "${{ env.WORKSPACE }}"' >> ${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
