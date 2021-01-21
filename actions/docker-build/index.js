@@ -67,14 +67,14 @@ async function dockerLogin(){
 
 }
 
-async function dockerTag(endPoint, imageTag){   
+async function dockerTag(endPoint, imageTAG){   
 
     return new Promise( (resolve) => {
 
-        let imageECR = `${endPoint}/${registryName}:${imageTag}`
-        console.log(`docker tag ${registryName} ${imageECR}`);
+        let imageECRTag = `${endPoint}/${registryName}:${imageTAG}`
+        console.log(`docker tag ${registryName} ${imageECRTag}`);
 
-        exec(`docker tag ${registryName} ${imageECR}`, (error, stdout, stderr) => {
+        exec(`docker tag ${registryName} ${imageECRTag}`, (error, stdout, stderr) => {
 
             if (error){             
                 console.error(`Error at docker tag: ${error}`);
@@ -90,8 +90,8 @@ async function dockerTag(endPoint, imageTag){
 
 async function dockerPush(imageEcr){
     
-    console.log(`docker push ${imageECR}`);
-        exec(`docker push ${imageECR}`, (error, stdout, stderr) => {
+    console.log(`docker push ${imageEcr}`);
+        exec(`docker push ${imageEcr}`, (error, stdout, stderr) => {
             if (error){ 
                 console.error(`Error push: ${error}`)
             } 
@@ -100,7 +100,9 @@ async function dockerPush(imageEcr){
 
         });
 
-    core.setOutput("image", imageECR);
+    let imageECRTag = `${imageEcr}:${imageTag}`
+
+    core.setOutput("image", imageECRTag);
 
     let repository = process.env.GITHUB_REPOSITORY.split("/")[1];
     repository = awsProfile === "prd" ? repository : `${repository}-${awsProfile}`
