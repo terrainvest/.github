@@ -59,7 +59,7 @@ async function dockerLogin(){
 
             let imageECR = `${endPoint}/${registryName}`
 
-            Promise.all([dockerTag(endPoint, imageTag), dockerTag(endPoint, "latest")]).then(values => dockerPush(imageECR));
+            Promise.all([dockerTag(imageECR, imageTag), dockerTag(imageECR, "latest")]).then(values => dockerPush(imageECR));
 
         });
 
@@ -67,11 +67,11 @@ async function dockerLogin(){
 
 }
 
-async function dockerTag(endPoint, imageTAG){   
+async function dockerTag(imageECR, imageTAG){   
 
     return new Promise( (resolve) => {
 
-        let imageECRTag = `${endPoint}/${registryName}:${imageTAG}`
+        let imageECRTag = `${imageECR}:${imageTAG}`
         console.log(`docker tag ${registryName} ${imageECRTag}`);
 
         exec(`docker tag ${registryName} ${imageECRTag}`, (error, stdout, stderr) => {
