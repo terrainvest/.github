@@ -21,7 +21,7 @@ async function getPath() {
 
         console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)
 
-        let { stdout2 } = await exec(`git log -3 --format='%h`);
+        let { stdout2 } = await exec(`git log -3 --format='%H'`);
 
         console.log(stdout2)
 
