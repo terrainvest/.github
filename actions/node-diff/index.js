@@ -14,10 +14,23 @@ console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
 
 async function getPath() {
   try {
-      const { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);
+
+      let { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);      
       
       if(!Boolean(stdout)){
-        core.setFailed("Nothing return from git diff-tree command at commit: "+ currentCommit);
+
+        let commitPullReq = core.getInput('pull_request_commit')
+
+        let { stdout2 } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + commitPullReq);
+
+        if(Boolean(stdout2)){
+          stdout = stdout2
+        } else{
+
+          core.setFailed(`Nothing return from git diff-tree command at commit: ${currentCommit} or ${commitPullReq}`);
+
+        }
+        
       }
 
       console.log("Files that have changed:\n" + stdout);
