@@ -8,6 +8,8 @@ if (core.getInput('git_event') === 'pull_request'){
   currentCommit = core.getInput('pull_request_commit');
 }
 
+console.log(process.env)
+
 const rootDir = core.getInput('rootDir');  
 
 console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
