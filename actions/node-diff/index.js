@@ -29,7 +29,7 @@ async function getPath() {
           stdout = stdout2
         } else{
 
-          core.setFailed(`Nothing return from git diff-tree command at commit: ${currentCommit} or ${commitPullReq}`);
+          core.setFailed(`Nothing return from git diff-tree command at commit: ${currentCommit}`);
 
         }
         
