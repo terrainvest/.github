@@ -21,7 +21,7 @@ async function getPath() {
 
         console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)
 
-        let { stdout2 } = await exec('git rev-list --parents -n 1 ' + currentCommit);
+        let { stdout2 } = await exec('git show -s --pretty=%P ' + currentCommit);
 
         console.log(stdout2)
 
