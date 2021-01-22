@@ -8,8 +8,6 @@ if (core.getInput('git_event') === 'pull_request'){
   currentCommit = core.getInput('pull_request_commit');
 }
 
-console.log(process.env)
-
 const rootDir = core.getInput('rootDir');  
 
 console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
@@ -20,6 +18,8 @@ async function getPath() {
       let { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);      
       
       if(!Boolean(stdout)){
+
+        console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)        
 
         let commitPullReq = core.getInput('pull_request_commit')
 
