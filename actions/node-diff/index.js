@@ -2,11 +2,9 @@ const core = require('@actions/core');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const currentCommit;
+var currentCommit = core.getInput('current_commit');
 
-if (core.getInput('current_commigit_event') === 'push'){
-  currentCommit = core.getInput('current_commit');
-} else {
+if (core.getInput('current_commigit_event') === 'pull_request'){
   currentCommit = core.getInput('pull_request_commit');
 }
 
