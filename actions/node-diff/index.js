@@ -19,11 +19,11 @@ async function getPath() {
       
       if(!Boolean(stdout)){
 
-        console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)        
+        console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)
 
-        let commitPullReq = core.getInput('pull_request_commit')
+        let { stdout2 } = await exec('git rev-list --parents -n 1 ' + commitPullReq);
 
-        let { stdout2 } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + commitPullReq);
+        console.log(stdout2)
 
         if(Boolean(stdout2)){
           stdout = stdout2
