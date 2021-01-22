@@ -39,6 +39,8 @@ jobs:
         uses: terrainvest/.github/actions/node-diff@master
         with:
           current_commit: ${{github.sha}}
+          pull_request_commit: ${{ github.event.pull_request.head.sha }}
+          git_event: ${{github.event_name}}
           rootDir: terraform
 
       - name: Show Generated Matrix

@@ -2,11 +2,17 @@ const core = require('@actions/core');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const currentCommit = core.getInput('current_commit');
+const currentCommit;
+
+if (core.getInput('current_commigit_event') === 'push'){
+  currentCommit = core.getInput('current_commit');
+} else {
+  currentCommit = core.getInput('pull_request_commit');
+}
+
 const rootDir = core.getInput('rootDir');  
 
 console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
-
 
 async function getPath() {
   try {
