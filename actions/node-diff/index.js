@@ -15,15 +15,19 @@ console.log(`Inputs: currentCommit - ${currentCommit}\trootDir - ${rootDir}`)
 async function getPath() {
   try {
 
-      let { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);      
+      let { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);
       
       if(!Boolean(stdout)){
 
         console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)
 
-        let { stdout2 } = await exec('git show -s --pretty=%P ' + currentCommit);
+        let { stdout2 } = await exec(`git log -2 --format='%H'`);
 
         console.log(stdout2)
+
+        let { stdout } = await exec(`git diff-tree --no-commit-id --name-only -r -c ${stdout2} ${currentCommit}`);
+
+        console.log(stdout)
 
         if(Boolean(stdout2)){
           stdout = stdout2
