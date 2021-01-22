@@ -4,7 +4,7 @@ const exec = util.promisify(require('child_process').exec);
 
 var currentCommit = core.getInput('current_commit');
 
-if (core.getInput('current_commigit_event') === 'pull_request'){
+if (core.getInput('git_event') === 'pull_request'){
   currentCommit = core.getInput('pull_request_commit');
 }
 
