@@ -101,6 +101,8 @@ jobs:
 
       - name: Lambda Update Function
         run: aws lambda update-function-code --region us-east-1 --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
+        with:
+          AWS_PROFILE: ${{ env.WORKSPACE }}
 
   if_failure:
     name: Notify Failure
