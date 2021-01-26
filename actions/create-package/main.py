@@ -54,7 +54,7 @@ def createPackage():
 
     try:
         print(f"Starting upload file to s3...")
-        response = clientS3.upload_file(zipName, f"default.lambda.package.{args.profile}", zipName)
+        response = clientS3.upload_file(zipName, f"default.lambda.package.{args.profile}", zipName, ExtraArgs={'ACL':'authenticated-read'})
         print(f"Finished upload.")
         print(f"Bucket: default.lambda.package.{args.profile}")
         print(f"Object: {zipName}")
