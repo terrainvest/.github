@@ -13,5 +13,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - run: pip3 install -r ${{ github.action_path }}/requirements.txt
     - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.using_docker }} -i ${{ inputs.image_uri }}
       shell: bash
