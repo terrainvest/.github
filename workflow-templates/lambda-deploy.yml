@@ -10,7 +10,7 @@ on:
      - 'terraform/**'
      - '.github/**'
 
-env:  
+env:
   GITHUB_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-    
+
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Cache Node.js modules
         uses: actions/cache@v2
-        with:    
+        with:
           path: |
             '**/node_modules'
             '~/.npm'
@@ -40,10 +40,10 @@ jobs:
             node-
       - name: NPM Install
         run: npm install
-        
+
       - name: NPM Build
-        run: npm run build     
-     
+        run: npm run build
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -77,15 +77,15 @@ jobs:
       - name: Setup AWS Profile
         uses: terrainvest/.github/actions/setup-aws-py@master
         with:
-          aws_profile: ${{ env.WORKSPACE }} 
+          aws_profile: ${{ env.WORKSPACE }}
           root_path: ~/
-        env:        
+        env:
           ORG_TF_AWS_KEY_ID: ${{ secrets.ORG_TF_AWS_KEY_ID }}
           ORG_TF_AWS_SECRET_KEY: ${{ secrets.ORG_TF_AWS_SECRET_KEY }}
           HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
           HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
           PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
-          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}      
+          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
 
       - name: Get Dist Folder
         uses: actions/download-artifact@master
@@ -102,16 +102,16 @@ jobs:
       - name: Docker Build and Push
         if: steps.check_files.outputs.files_exists == 'true'
         id: docker-build
-        uses: terrainvest/.github/actions/docker-build@master        
+        uses: terrainvest/.github/actions/docker-build@master
         with:
           aws_profile: ${{ env.WORKSPACE }}
 
       - name: Lambda Update
-          uses: terrainvest/.github/actions/create-package@master
-          with:
-            aws_profile: ${{ env.WORKSPACE }}
-            using_docker: ${{ steps.check_files.outputs.files_exists }}
-            image_uri: ${{ steps.docker-build.outputs.image }}
+        uses: terrainvest/.github/actions/create-package@master
+        with:
+          aws_profile: ${{ env.WORKSPACE }}
+          using_docker: ${{ steps.check_files.outputs.files_exists }}
+          image_uri: ${{ steps.docker-build.outputs.image }}
 
   if_failure:
     name: Notify Failure
