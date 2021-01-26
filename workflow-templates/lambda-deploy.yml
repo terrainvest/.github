@@ -91,18 +91,27 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: nodeDist
-          path: dist
+          path: ./dist
+
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: ".github/.env.lambda"
 
       - name: Docker Build and Push
+        if: steps.check_files.outputs.files_exists == 'true'
         id: docker-build
         uses: terrainvest/.github/actions/docker-build@master        
         with:
           aws_profile: ${{ env.WORKSPACE }}
 
-      - name: Lambda Update Function
-        run: aws lambda update-function-code --region us-east-1 --function-name "${{ steps.docker-build.outputs.repository }}" --image-uri ${{ steps.docker-build.outputs.image }}
-        env:
-          AWS_PROFILE: ${{ env.WORKSPACE }}
+      - name: Lambda Update
+          uses: terrainvest/.github/actions/create-package@master
+          with:
+            aws_profile: ${{ env.WORKSPACE }}
+            using_docker: ${{ steps.check_files.outputs.files_exists }}
+            image_uri: ${{ steps.docker-build.outputs.image }}
 
   if_failure:
     name: Notify Failure
