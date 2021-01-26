@@ -58,7 +58,7 @@ def createPackage():
 
 if __name__ == '__main__':
 
-    functionName = os.environ['GITHUB_REPOSITORY'].split('/')[1]
+    functionName = f"{os.environ['GITHUB_REPOSITORY'].split('/')[1]}-{args.profile}" if args.profile != 'prd' else os.environ['GITHUB_REPOSITORY'].split('/')[1]
     client = main()
 
     if args.docker == 'true':
