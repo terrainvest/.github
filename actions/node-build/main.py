@@ -20,9 +20,9 @@ def createDist(mainFile):
         os.makedirs("dist")
 
     print("copying files...")
-    shutil.copyfile(mainFile, './dist/')
-    shutil.copyfile("package.json", './dist/')
-    shutil.copyfile("package-lock.json", './dist/')
+    shutil.copyfile(mainFile, './dist')
+    shutil.copyfile("package.json", './dist')
+    shutil.copyfile("package-lock.json", './dist')
 
     pass
 
