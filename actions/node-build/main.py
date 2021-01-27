@@ -9,10 +9,15 @@ def readPackage():
     jsonData = json.load(jsonFile)
 
     retorno = False
+    mainFile = ""
+
     if 'build' in jsonData['scripts']:
         retorno = True
 
-    return retorno, jsonData['main']
+    if 'main' in jsonData:
+        mainFile = jsonData['main']
+
+    return retorno, mainFile
 
 def createDist(mainFile):
     print("mkdir dist")
