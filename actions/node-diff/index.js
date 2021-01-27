@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 var currentCommit = core.getInput('current_commit');
@@ -63,8 +64,11 @@ getPath()
     objPath['path'] = [];
 
     const promises = arrayPath.map(async (item) => {
-    
-      if(item.match(/\b.tf\b/)){
+
+      let lastSlash = item.lastIndexOf("/");
+      let path = `${item.substring(0, lastSlash)}/main.tf`
+      //if(item.match(/\b.tf\b/)){
+      if(fs.existsSync(path)){
         
         itemArray = item.split('/');     
   
