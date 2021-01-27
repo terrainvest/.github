@@ -1,0 +1,7 @@
+name: 'Node-Build'
+description: 'build node or create dist folder'
+runs:
+  using: 'composite'
+  steps:
+    - run: python3 ${{ github.action_path }}/main.py
+      shell: bash

@@ -38,11 +38,12 @@ jobs:
           restore-keys: |
             node-${{ hashFiles('package-lock.json') }}
             node-
+
       - name: NPM Install
         run: npm install
 
-      - name: NPM Build
-        run: npm run build
+      - name: Node Build
+        uses: terrainvest/.github/actions/node-build@master
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
