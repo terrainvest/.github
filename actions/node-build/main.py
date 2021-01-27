@@ -23,6 +23,7 @@ def createDist(mainFile):
     shutil.copyfile(mainFile, f'./dist/{mainFile}')
     shutil.copyfile("package.json", './dist/package.json')
     shutil.copyfile("package-lock.json", './dist/package-lock.json')
+    shutil.copytree("./node_modules", './dist/node_modules')
 
     pass
 
