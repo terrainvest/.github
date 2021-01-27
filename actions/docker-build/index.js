@@ -10,7 +10,7 @@ dotenv.config({path: `${process.env.GITHUB_WORKSPACE}/.github/.env.lambda` });
 const awsProfile = core.getInput('aws_profile');
 const imageTag = process.env.GITHUB_SHA.substring(0, 8)
 
-const registryName = awsProfile === "prd" ? process.env["REGISTRY"] : `${process.env["REGISTRY"]}.${awsProfile}`;
+const registryName = awsProfile === "prd" ? process.env["REGISTRY"] : process.env["REGISTRY"].includes('-') ? `${process.env["REGISTRY"]}-${awsProfile}` : `${process.env["REGISTRY"]}.${awsProfile}`;
 
 async function dockerBuild(){
 
