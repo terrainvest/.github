@@ -10,7 +10,7 @@ from botocore.exceptions import ClientError
 parser = argparse.ArgumentParser()
 parser.add_argument('profile', help="- My local credential profile.", nargs='?', const='default')
 parser.add_argument('docker', help="- using docker image to deploy lambda.", nargs='?', const='default')
-parser.add_argument('-i', '--image', help="- image uri.")
+parser.add_argument('-i', '--image', help="- image uri.", nargs='?', const='')
 
 args = parser.parse_args()
 
