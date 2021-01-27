@@ -1,0 +1,171 @@
+name: TF-WorkFlow-Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      working_directory:
+        description: 'Directory to destroy'
+        required: true
+
+env:
+  TF_VERSION: 0.14.4
+  GITHUB_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
+
+jobs:
+
+  terraformJob:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    name: Terraform Job at ${{github.event.inputs.working_directory}}
+    outputs:
+      workspace: ${{steps.get-workspace.outputs.WORKSPACE}}
+      job_context: ${{ toJSON(job) }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{github.event.inputs.working_directory}}
+    env:
+      WD: ${{github.event.inputs.working_directory}}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Workspace
+        id: get-workspace
+        run: |
+          IFS='/'
+          read -ra ENV <<< ${{ env.WD }}
+          echo "::set-output name=WORKSPACE::"${ENV[1]}""
+
+      - name: Set ENV
+        run: echo "WORKSPACE=${{steps.get-workspace.outputs.WORKSPACE}}" >> $GITHUB_ENV
+      
+      - name: Setup AWS Profile
+        uses: terrainvest/.github/actions/setup-aws-py@master
+        with:
+          aws_profile: ${{ env.WORKSPACE }} 
+          root_path: ~/
+        env:        
+          ORG_TF_AWS_KEY_ID: ${{ secrets.ORG_TF_AWS_KEY_ID }}
+          ORG_TF_AWS_SECRET_KEY: ${{ secrets.ORG_TF_AWS_SECRET_KEY }}
+          HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
+          HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
+          PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
+          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
+      
+      - name: Get S3 Key
+        id: s3-key
+        uses: terrainvest/.github/actions/config-backend@master
+        with:
+          path: ${{ env.WD }}
+        
+      - name: Configure Git Credentials
+        uses: fusion-engineering/setup-git-credentials@v2
+        with:
+          credentials: https://murilopacsonov:${{ env.GITHUB_AUTH_TOKEN }}@github.com
+
+      - name: Setup Terraform backend
+        run: |
+          echo 'profile = "${{ env.WORKSPACE }}"' >> ${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+          echo 'key = "${{ steps.s3-key.outputs.key }}"' >> ${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config=${{ github.workspace }}/terraform/${{ env.WORKSPACE }}/backend.tfvars
+
+      - name: Terraform Create Workspace
+        id: workspace
+        run: |          
+          terraform workspace select ${{ env.WORKSPACE }} || terraform workspace new ${{ env.WORKSPACE }}
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        continue-on-error: false
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -destroy -no-color -var='aws_profile=${{ env.WORKSPACE }}' -out=plan-file.tfplan
+        continue-on-error: false   
+
+      - uses: actions/github-script@0.9.0
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ env.GITHUB_AUTH_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+            \`\`\`${process.env.PLAN}\`\`\`
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: IF FAILURE
+        if: steps.plan.outcome == 'failure'
+        id: error
+        run: echo "::error::Error at planning terraform in ${{env.WORKSPACE}}"
+
+      - name: Terraform Destroy
+        id: apply
+        run: |
+          echo "::debug::Destroying terraform in ${{env.WORKSPACE}}"
+          terraform destroy -auto-approve plan-file.tfplan
+
+      - name: Delete AWS Credential
+        run: rm -rf ~/.aws
+    
+  if_failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [terraformJob]
+    env:
+      WORKSPACE: ${{needs.terraformJob.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.terraformJob.outputs.job_context}}
+    if: failure()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.TF_WEBHOOK }}
+          overwrite: "{title: `Terraform workflow has failed`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
+
+  if_success:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [terraformJob]
+    env:
+      WORKSPACE: ${{needs.terraformJob.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.terraformJob.outputs.job_context}}
+    if: success()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.TF_WEBHOOK }}
+          overwrite: "{title: `Terraform workflow has succeeded`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
