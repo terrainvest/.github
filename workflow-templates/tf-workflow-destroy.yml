@@ -148,7 +148,14 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: "{title: `Terraform workflow has failed`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          overwrite: |
+          "{title: `Terraform Destroy Workflow`,
+          text: `**Workflow Actor:** ${{ github.actor }}\n\n
+                 **Environment:** ${{env.WORKSPACE}}\n\n
+                 **Branch:** ${{github.ref}}\n\n
+                 **Repository:** ${{github.repository}}\n\n
+                 **Action:** ${{github.event_name}}\n\n
+                 **Path:** ${{github.event.inputs.working_directory}}`}"
           job: ${{ env.JOB_CONTEXT }}
           needs: ${{ toJson(needs) }}
 
@@ -166,6 +173,13 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: "{title: `Terraform workflow has succeeded`, text: `**Workflow Actor:** ${{ github.actor }}\n\n**Environment:** ${{env.WORKSPACE}}\n\n**Branch:** ${{github.ref}}\n\n**Repository:** ${{github.repository}}\n\n**Action:** ${{github.event_name}}`}"
+          overwrite: |
+          "{title: `Terraform Destroy Workflow`,
+          text: `**Workflow Actor:** ${{ github.actor }}\n\n
+                  **Environment:** ${{env.WORKSPACE}}\n\n
+                  **Branch:** ${{github.ref}}\n\n
+                  **Repository:** ${{github.repository}}\n\n
+                  **Action:** ${{github.event_name}}\n\n
+                  **Path** ${{github.event.inputs.working_directory}}`}"
           job: ${{ env.JOB_CONTEXT }}
           needs: ${{ toJson(needs) }}
