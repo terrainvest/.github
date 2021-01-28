@@ -67,8 +67,8 @@ getPath()
 
       let lastSlash = item.lastIndexOf("/");
       let path = `${item.substring(0, lastSlash)}/main.tf`
-      //if(item.match(/\b.tf\b/)){
-      if(fs.existsSync(path)){
+
+      if(fs.existsSync(path) && !item.includes("modules")) {
         
         itemArray = item.split('/');     
   
