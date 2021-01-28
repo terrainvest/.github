@@ -148,7 +148,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: |
+          overwrite: >
           "{title: `Terraform Destroy Workflow`,
           text: `**Workflow Actor:** ${{ github.actor }}\n\n
                  **Environment:** ${{env.WORKSPACE}}\n\n
@@ -173,7 +173,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: |
+          overwrite: >
           "{title: `Terraform Destroy Workflow`,
           text: `**Workflow Actor:** ${{ github.actor }}\n\n
                   **Environment:** ${{env.WORKSPACE}}\n\n
