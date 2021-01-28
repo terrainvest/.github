@@ -129,7 +129,7 @@ jobs:
         id: apply
         run: |
           echo "::debug::Destroying terraform in ${{env.WORKSPACE}}"
-          terraform destroy -auto-approve
+          terraform apply -auto-approve plan-file.tfplan
 
       - name: Delete AWS Credential
         run: rm -rf ~/.aws
