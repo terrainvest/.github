@@ -75,6 +75,7 @@ jobs:
         echo "::set-output name=WORKSPACE::$profile"
         echo "PROFILE=$profile" >> $GITHUB_ENV
         echo "CFID=${profile}_cfid" >> $GITHUB_ENV
+        echo "BUCKET=${profile}_bucket" >> $GITHUB_ENV
 
     - name: Cache Node.js modules
       uses: actions/cache@v2
@@ -87,10 +88,56 @@ jobs:
           node-${{ hashFiles('package-lock.json') }}
           node-
 
-    - name: Node Build
-      id: node_build
+    - name: Sync Front
       uses: terrainvest/.github/actions/front-sync@master
       with:
         aws_profile: ${{ env.PROFILE }}
-        folder_builder: ${{ needs.install.outputs.build_path }}
+        folder_build: ${{ needs.install.outputs.build_path }}
         cf_id: ${{ secrets[env.CFID] }}
+        bucket: ${{ secrets[env.BUCKET] }}
+
+  if_failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [ nodeBuild, deployLambda ]
+    env:
+      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+    if: failure()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.ACT_WEBHOOK }}
+          overwrite: "{title: `Front Workflow`,
+                    text: `**Workflow Actor:** ${{ github.actor }}\n\n
+                          **Environment:** ${{env.WORKSPACE}}\n\n
+                          **Branch:** ${{github.ref}}\n\n
+                          **Repository:** ${{github.repository}}\n\n
+                          **Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}
+
+  if_success:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [ nodeBuild, deployLambda ]
+    env:
+      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+    if: success()
+    steps:
+      - uses: actions/checkout@v2
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@v1.0.4
+        with:
+          webhook_url: ${{ secrets.ACT_WEBHOOK }}
+          overwrite: "{title: `Lambda Workflow`,
+                    text: `**Workflow Actor:** ${{ github.actor }}\n\n
+                          **Environment:** ${{env.WORKSPACE}}\n\n
+                          **Branch:** ${{github.ref}}\n\n
+                          **Repository:** ${{github.repository}}\n\n
+                          **Action:** ${{github.event_name}}`}"
+          job: ${{ env.JOB_CONTEXT }}
+          needs: ${{ toJson(needs) }}

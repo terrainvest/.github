@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('profile', help="- My local credential profile.", nargs='?', const='default')
 parser.add_argument('docker', help="- using docker image to deploy lambda.", nargs='?', const='default')
 parser.add_argument('-i', '--image', help="- image uri.", nargs='?', const='')
+parser.add_argument('-f', '--folder', help="- folder build.", nargs='?', const=None)
 
 args = parser.parse_args()
 
@@ -40,9 +41,12 @@ def updS3(client, functionName, keyS3):
 def createPackage():
     zipName = f"{os.environ['GITHUB_SHA'][:8]}.zip"
 
-    print("Creating zip file from ./dist folder")    
+    if args.folder == None:
+        args.folder = 'dist'
+
+    print(f"Creating zip file from ./{args.folder} folder")
     with ZipFile(zipName, 'w') as zipObj:
-        for folderName, subfolders, filenames in os.walk('./dist'):
+        for folderName, subfolders, filenames in os.walk(f"./{args.folder}"):
             for filename in filenames:
                 filePath = os.path.join(folderName, filename)
                 zipObj.write(filePath, basename(filePath))

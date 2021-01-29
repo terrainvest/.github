@@ -4,14 +4,18 @@ inputs:
   aws_profile:
     description: 'Profile aws'
     required: true
-  folder_builder:
+  folder_build:
     description: 'folder of build to sync in s3'
     required: true
   cf_id:
     description: 'cf id to invalidade'
     required: true
+  bucket:
+    description: 'bucket of site'
+    required: true
+
 runs:
   using: 'composite'
   steps:
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.folder_builder }} ${{ inputs.cf_id }}
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.folder_build }} ${{ inputs.cf_id }} ${{ inputs.bucket }}
       shell: bash

@@ -7,11 +7,14 @@ inputs:
   using_docker:
     description: 'Bool if update using docker package'
     required: true
+  folder_build:
+    description: 'folder build'
+    required: false
   image_uri:
     description: 'Image to use'
     required: false
 runs:
   using: 'composite'
   steps:
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.using_docker }} -i ${{ inputs.image_uri }}
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.using_docker }} -f ${{ inputs.folder_build }} -i ${{ inputs.image_uri }}
       shell: bash
