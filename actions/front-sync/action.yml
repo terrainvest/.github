@@ -1,0 +1,17 @@
+name: 'Front-Sync'
+description: 'sync react s3'
+inputs:
+  aws_profile:
+    description: 'Profile aws'
+    required: true
+  folder_builder:
+    description: 'folder of build to sync in s3'
+    required: true
+  cf_id:
+    description: 'cf id to invalidade'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.folder_builder }} ${{ inputs.cf_id }}
+      shell: bash

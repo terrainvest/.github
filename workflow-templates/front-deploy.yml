@@ -1,7 +1,14 @@
 name: Manual workflow
 
-on: 
-  workflow_dispatch
+on:
+  push:
+    branches:
+      - master
+      - homolog
+      - develop
+    paths-ignore:
+      - 'terraform/**'
+      - '.github/**'
 
 env:
   GITHUB_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -11,6 +18,8 @@ jobs:
   install:
     name: install
     runs-on: ubuntu-latest
+    outputs:
+      build_path: ${{steps.node_build.outputs.build_path}}
     steps:
     
     - uses: actions/checkout@v2
@@ -30,10 +39,16 @@ jobs:
         restore-keys: |
           node-${{ hashFiles('package-lock.json') }}
           node-          
-    
-    - name: Install dependencies
-      run: |                
-        npm ci
+
+    - name: Node Build
+      id: node_build
+      uses: terrainvest/.github/actions/node-build@master
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: nodeDist
+        path: ${{steps.node_build.outputs.build_path}}
 
 
   build:
@@ -49,6 +64,18 @@ jobs:
       with:
         node-version: '12.3'
 
+    - name: Get Profile
+      id: get-workspace
+      run: |
+        branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
+        if [[ $branch_name == *"ma"* ]]; then profile="prd"
+        elif [[ $branch_name == *"hom"* ]]; then profile="hml"
+        else profile="dev"
+        fi
+        echo "::set-output name=WORKSPACE::$profile"
+        echo "PROFILE=$profile" >> $GITHUB_ENV
+        echo "CFID=${profile}_cfid" >> $GITHUB_ENV
+
     - name: Cache Node.js modules
       uses: actions/cache@v2
       with:    
@@ -60,16 +87,10 @@ jobs:
           node-${{ hashFiles('package-lock.json') }}
           node-
 
-    - name: Build
-      run: |      
-        npm install --save webpack-merge  
-        npm run build
-     
-    - name: Add Short_Sha Env
-      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v2
+    - name: Node Build
+      id: node_build
+      uses: terrainvest/.github/actions/front-sync@master
       with:
-        name: ${{ env.SHORT_SHA }}
-        path: dist
+        aws_profile: ${{ env.PROFILE }}
+        folder_builder: ${{ needs.install.outputs.build_path }}
+        cf_id: ${{ secrets[env.CFID] }}

@@ -18,6 +18,8 @@ jobs:
   nodeBuild:
     runs-on: ubuntu-latest
     name: Node Build
+    outputs:
+      build_path: ${{steps.node_build.outputs.build_path}}
     steps:
 
       - name: Checkout
@@ -40,13 +42,14 @@ jobs:
             node-
 
       - name: Node Build
+        id: node_build
         uses: terrainvest/.github/actions/node-build@master
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
           name: nodeDist
-          path: dist
+          path: ${{steps.node_build.outputs.build_path}}
 
 
   deployLambda:
@@ -89,7 +92,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: nodeDist
-          path: ./dist
+          path: ${{needs.nodeBuild.outputs.build_path}}
 
       - name: Check file existence
         id: check_files

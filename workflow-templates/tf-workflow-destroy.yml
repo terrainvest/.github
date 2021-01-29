@@ -41,26 +41,26 @@ jobs:
 
       - name: Set ENV
         run: echo "WORKSPACE=${{steps.get-workspace.outputs.WORKSPACE}}" >> $GITHUB_ENV
-      
+
       - name: Setup AWS Profile
         uses: terrainvest/.github/actions/setup-aws-py@master
         with:
-          aws_profile: ${{ env.WORKSPACE }} 
+          aws_profile: ${{ env.WORKSPACE }}
           root_path: ~/
-        env:        
+        env:
           ORG_TF_AWS_KEY_ID: ${{ secrets.ORG_TF_AWS_KEY_ID }}
           ORG_TF_AWS_SECRET_KEY: ${{ secrets.ORG_TF_AWS_SECRET_KEY }}
           HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
           HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
           PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
           PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
-      
+
       - name: Get S3 Key
         id: s3-key
         uses: terrainvest/.github/actions/config-backend@master
         with:
           path: ${{ env.WD }}
-        
+
       - name: Configure Git Credentials
         uses: fusion-engineering/setup-git-credentials@v2
         with:
@@ -82,7 +82,7 @@ jobs:
 
       - name: Terraform Create Workspace
         id: workspace
-        run: |          
+        run: |
           terraform workspace select ${{ env.WORKSPACE }} || terraform workspace new ${{ env.WORKSPACE }}
 
       - name: Terraform Validate
@@ -94,7 +94,7 @@ jobs:
         id: plan
         run: |
           terraform plan -destroy -no-color -var='aws_profile=${{ env.WORKSPACE }}' -out=plan-file.tfplan
-        continue-on-error: false   
+        continue-on-error: false
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
@@ -133,7 +133,7 @@ jobs:
 
       - name: Delete AWS Credential
         run: rm -rf ~/.aws
-    
+
   if_failure:
     name: Notify Failure
     runs-on: ubuntu-latest
@@ -148,8 +148,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: >
-          "{title: `Terraform Destroy Workflow`,
+          overwrite: "{title: `Terraform Destroy Workflow`,
           text: `**Workflow Actor:** ${{ github.actor }}\n\n
                  **Environment:** ${{env.WORKSPACE}}\n\n
                  **Branch:** ${{github.ref}}\n\n
@@ -173,8 +172,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@v1.0.4
         with:
           webhook_url: ${{ secrets.TF_WEBHOOK }}
-          overwrite: >
-          "{title: `Terraform Destroy Workflow`,
+          overwrite: "{title: `Terraform Destroy Workflow`,
           text: `**Workflow Actor:** ${{ github.actor }}\n\n
                   **Environment:** ${{env.WORKSPACE}}\n\n
                   **Branch:** ${{github.ref}}\n\n
