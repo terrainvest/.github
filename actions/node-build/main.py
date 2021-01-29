@@ -61,6 +61,9 @@ def main(build, mainFile, runTest):
             print("create dist folder")
             createDist(mainFile)
 
+        buildPath = "build" if os.path.exists("build") else "dist"
+        print(f"::set-output name=build_path::'{buildPath}'")
+
     except Exception as e:
         print(f"ERROR: {e}")
 
