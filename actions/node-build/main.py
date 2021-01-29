@@ -9,6 +9,7 @@ def readPackage():
     jsonData = json.load(jsonFile)
 
     retorno = False
+    test = True
     mainFile = ""
 
     if 'build' in jsonData['scripts']:
@@ -17,7 +18,10 @@ def readPackage():
     if 'main' in jsonData:
         mainFile = jsonData['main']
 
-    return retorno, mainFile
+    if 'test' not in jsonData['scripts']:
+        test = False
+
+    return retorno, mainFile, test
 
 def createDist(mainFile):
     print("mkdir dist")
@@ -32,11 +36,27 @@ def createDist(mainFile):
 
     pass
 
-def main(build, mainFile):
+def useYarn():
+    return os.path.exists(".yarnrc")
+
+def main(build, mainFile, runTest):
     try:
+
+        package = "npm"
+
         if build:
-            print("exec npm run build")
-            subprocess.run(["npm", "run", "build"])
+            if useYarn():
+                print("Installing yarn")
+                subprocess.run(["npm", "install", "-g", "yarn"])
+                package = "yarn"
+
+            print(f"exec {package}")
+            subprocess.run([package, "install"])
+            subprocess.run([package, "run", "build"])
+
+            if runTest:
+                subprocess.run([package, "test"])
+
         else:
             print("create dist folder")
             createDist(mainFile)
@@ -48,6 +68,6 @@ def main(build, mainFile):
 
 if __name__ == '__main__':
     print("Looking for Build script")
-    buildNode, mainFile = readPackage()
+    buildNode, mainFile, runTest = readPackage()
     print(f"Find build script: {buildNode}")
-    main(buildNode, mainFile)
+    main(buildNode, mainFile, runTest)
