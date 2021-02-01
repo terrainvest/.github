@@ -43,7 +43,7 @@ def deleteKeys(client):
             keyMap['Key'] = content['Key']
             deleteKeys['Objects'].append(keyMap)
 
-        client.delete_objects(Bucket=args.bucket, Delete=deleteKeys)
+        client.delete_objects(Bucket=args.bucket, Delete=str(deleteKeys))
 
     except Exception as e:
         sys.exit(f'Error on delete s3: {e}')
