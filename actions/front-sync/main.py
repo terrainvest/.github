@@ -43,6 +43,7 @@ def deleteKeys(client):
             keyMap['Key'] = content['Key']
             deleteKeys['Objects'].append(keyMap)
 
+        print(f"Keys to delete: {str(deleteKeys)}")
         client.delete_objects(Bucket=args.bucket, Delete=str(deleteKeys))
 
     except Exception as e:
