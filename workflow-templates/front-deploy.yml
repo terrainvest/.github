@@ -10,12 +10,15 @@ on:
       - 'terraform/**'
       - '.github/**'
 
-  workflow_dispatch
-
+  workflow_dispatch:
+    inputs:
+      comment:
+        description: 'Comment to wf'
+        required: false
 
 env:
-  GITHUB_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  FONTAWESOME_NPM_AUTH_TOKEN : ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+  GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  FONTAWESOME_TERRA_NPM_AUTH_TOKEN : ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
 
 jobs:
   install:
