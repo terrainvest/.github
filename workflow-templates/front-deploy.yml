@@ -53,15 +53,11 @@ jobs:
       env: 
         CI: false
 
-    - name: Create output
-      id: path
-      run: echo "::set-output name=build_path::${{env.BUILD_PATH}}"
-
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
         name: nodeDist
-        path: ${{steps.path.outputs.build_path}}
+        path: ${{steps.node_build.outputs.build_path}}
 
 
   build:
