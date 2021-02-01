@@ -17,6 +17,7 @@ args = parser.parse_args()
 
 
 def main():
+    print(f"Running at profile: {args.profile}")
     sessionAws = boto3.Session(profile_name=args.profile, region_name='us-east-1')
 
     try:
@@ -35,7 +36,7 @@ def main():
 
 def deleteKeys(client):
     try:
-        print("Get Keys to delete")
+        print(f"Get Keys to delete from bucket: {str(args.bucket)}")
         response = client.list_objects(Bucket=str(args.bucket))
 
         print("Filter keys")
