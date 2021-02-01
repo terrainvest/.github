@@ -52,6 +52,9 @@ def main(build, mainFile, runTest):
                 subprocess.run(["yarn", "--version"])
                 package = "yarn"
 
+            print("ENV VARS")
+            print(os.environ)
+
             print(f"running {package} install")
             subprocess.run([package, "install"])
             print(f"running {package} build")
