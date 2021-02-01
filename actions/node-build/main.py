@@ -48,10 +48,16 @@ def main(build, mainFile, runTest):
             if useYarn():
                 print("Installing yarn")
                 subprocess.run(["npm", "install", "-g", "yarn"])
+                print("Yarn version")
+                subprocess.run(["yarn", "--version"])
                 package = "yarn"
 
-            print(f"exec {package}")
+            print("ENV VARS")
+            print(os.environ)
+
+            print(f"running {package} install")
             subprocess.run([package, "install"])
+            print(f"running {package} build")
             subprocess.run([package, "run", "build"])
 
             if runTest:
@@ -70,7 +76,7 @@ def main(build, mainFile, runTest):
     pass
 
 if __name__ == '__main__':
-    print("Looking for Build script")
+    print("Looking for Build script")    
     buildNode, mainFile, runTest = readPackage()
     print(f"Find build script: {buildNode}")
     main(buildNode, mainFile, runTest)
