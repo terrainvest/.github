@@ -98,8 +98,8 @@ jobs:
         fi
         echo "::set-output name=WORKSPACE::$profile"
         echo "PROFILE=$profile" >> $GITHUB_ENV
-        echo "CFID=${profile^^}_CFID" >> $GITHUB_ENV
-        echo "BUCKET=${profile^^}_BUCKET" >> $GITHUB_ENV
+        echo "CFID=${profile}_CFID" >> $GITHUB_ENV
+        echo "BUCKET=${profile}_BUCKET" >> $GITHUB_ENV
 
     - name: Setup AWS Profile
       uses: terrainvest/.github/actions/setup-aws-py@master
