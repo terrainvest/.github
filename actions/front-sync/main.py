@@ -35,6 +35,7 @@ def main():
 
 def deleteKeys(client):
     try:
+        print("Start to delete keys")
         response = client.list_objects(Bucket=args.bucket)
 
         deleteKeys = {'Objects': []}
