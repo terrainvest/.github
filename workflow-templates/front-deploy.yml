@@ -101,6 +101,19 @@ jobs:
         echo "CFID=${profile^^}_CFID" >> $GITHUB_ENV
         echo "BUCKET=${profile^^}_BUCKET" >> $GITHUB_ENV
 
+    - name: Setup AWS Profile
+        uses: terrainvest/.github/actions/setup-aws-py@master
+        with:
+          aws_profile: ${{ env.PROFILE }} 
+          root_path: ~/
+        env:        
+          ORG_TF_AWS_KEY_ID: ${{ secrets.ORG_TF_AWS_KEY_ID }}
+          ORG_TF_AWS_SECRET_KEY: ${{ secrets.ORG_TF_AWS_SECRET_KEY }}
+          HML_TF_AWS_KEY_ID: ${{ secrets.HML_TF_AWS_KEY_ID }}
+          HML_TF_AWS_SECRET_KEY: ${{ secrets.HML_TF_AWS_SECRET_KEY }}
+          PRD_TF_AWS_KEY_ID: ${{ secrets.PRD_TF_AWS_KEY_ID }}
+          PRD_TF_AWS_SECRET_KEY: ${{ secrets.PRD_TF_AWS_SECRET_KEY }}
+
     - name: Cache Node.js modules
       uses: actions/cache@v2
       with:    
