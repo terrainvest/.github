@@ -1,4 +1,4 @@
-name: Manual workflow
+name: Front Workflow
 
 on:
   push:
@@ -74,8 +74,8 @@ jobs:
         fi
         echo "::set-output name=WORKSPACE::$profile"
         echo "PROFILE=$profile" >> $GITHUB_ENV
-        echo "CFID=${profile}_cfid" >> $GITHUB_ENV
-        echo "BUCKET=${profile}_bucket" >> $GITHUB_ENV
+        echo "CFID=${profile^^}_CFID" >> $GITHUB_ENV
+        echo "BUCKET=${profile^^}_BUCKET" >> $GITHUB_ENV
 
     - name: Cache Node.js modules
       uses: actions/cache@v2
@@ -115,7 +115,8 @@ jobs:
                           **Environment:** ${{env.WORKSPACE}}\n\n
                           **Branch:** ${{github.ref}}\n\n
                           **Repository:** ${{github.repository}}\n\n
-                          **Action:** ${{github.event_name}}`}"
+                          **Action:** ${{github.event_name}}\n\n
+                          **Bucket:** ${{ secrets[env.BUCKET] }}`}"
           job: ${{ env.JOB_CONTEXT }}
           needs: ${{ toJson(needs) }}
 
@@ -138,6 +139,7 @@ jobs:
                           **Environment:** ${{env.WORKSPACE}}\n\n
                           **Branch:** ${{github.ref}}\n\n
                           **Repository:** ${{github.repository}}\n\n
-                          **Action:** ${{github.event_name}}`}"
+                          **Action:** ${{github.event_name}}\n\n
+                          **Bucket:** ${{ secrets[env.BUCKET] }}`}"
           job: ${{ env.JOB_CONTEXT }}
           needs: ${{ toJson(needs) }}
