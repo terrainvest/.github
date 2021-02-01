@@ -35,9 +35,10 @@ def main():
 
 def deleteKeys(client):
     try:
-        print("Start to delete keys")
-        response = client.list_objects(Bucket=args.bucket)
+        print("Get Keys to delete")
+        response = client.list_objects(Bucket=str(args.bucket))
 
+        print("Filter keys")
         deleteKeys = {'Objects': []}
         for content in response['Contents']:
             keyMap = dict()
