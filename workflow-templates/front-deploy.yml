@@ -26,7 +26,7 @@ jobs:
     name: install
     runs-on: ubuntu-latest
     outputs:
-      build_path: ${{steps.node_build.outputs.build_path}}
+      build_path: ${{steps.path.outputs.build_path}}
     steps:
     
     - uses: actions/checkout@v2
@@ -42,22 +42,26 @@ jobs:
         path: |
           '**/node_modules'
           '~/.npm'
-        key: node-${{ hashFiles('package-lock.json') }}
+        key: node-${{ hashFiles('yarn.lock') }}
         restore-keys: |
-          node-${{ hashFiles('package-lock.json') }}
+          node-${{ hashFiles('yarn.lock') }}
           node-          
 
     - name: Node Build
       id: node_build
-      uses: terrainvest/.github/actions/node-build@master 
+      uses: terrainvest/.github/actions/node-build@master      
       env: 
-        CI: false     
+        CI: false
+
+    - name: Create output
+      id: path
+      run: echo "::set-output name=build_path::${{env.BUILD_PATH}}"
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
         name: nodeDist
-        path: ${{steps.node_build.outputs.build_path}}
+        path: ${{steps.path.outputs.build_path}}
 
 
   build:
@@ -95,9 +99,9 @@ jobs:
         path: |
           '**/node_modules'
           '~/.npm'
-        key: node-${{ hashFiles('package-lock.json') }}
+        key: node-${{ hashFiles('yarn.lock') }}
         restore-keys: |
-          node-${{ hashFiles('package-lock.json') }}
+          node-${{ hashFiles('yarn.lock') }}
           node-
 
     - name: Sync Front
