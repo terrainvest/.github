@@ -47,11 +47,23 @@ jobs:
           node-${{ hashFiles('yarn.lock') }}
           node-          
 
-    - name: Node Build
-      id: node_build
+    - name: Node Build      
       uses: terrainvest/.github/actions/node-build@master      
       env: 
         CI: false
+
+    - name: Check file existence
+      id: check_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "build/"
+
+    - name: Set Build Path
+      id: node_build
+      run: |
+         if [[ ${{steps.check_files.outputs.files_exists}} == 'true' ]]; then echo "::set-output name=build_path::build"
+         else echo "::set-output name=build_path::dist"
+         fi
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
