@@ -57,15 +57,15 @@ def main(build, mainFile, runTest):
             print(f"running {package} build")
             subprocess.run([package, "run", "build"])
 
+            buildPath = "build" if os.path.exists("build") else "dist"
+            print(f"::set-output name=build_path::'{buildPath}'")
+
             if runTest:
                 subprocess.run([package, "test"])
 
         else:
             print("create dist folder")
-            createDist(mainFile)
-
-        buildPath = "build" if os.path.exists("build") else "dist"
-        print(f"::set-output name=build_path::'{buildPath}'")
+            createDist(mainFile)        
 
     except Exception as e:
         print(f"ERROR: {e}")
