@@ -55,6 +55,9 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     needs: install
+    outputs:
+      job_context: ${{ toJSON(job) }}
+      workspace: ${{steps.get-workspace.outputs.WORKSPACE}}
     steps:
 
     - uses: actions/checkout@v2
@@ -99,10 +102,10 @@ jobs:
   if_failure:
     name: Notify Failure
     runs-on: ubuntu-latest
-    needs: [ nodeBuild, deployLambda ]
+    needs: [ build ]
     env:
-      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
-      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+      WORKSPACE: ${{needs.build.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.build.outputs.job_context}}
     if: failure()
     steps:
       - uses: actions/checkout@v2
@@ -123,10 +126,10 @@ jobs:
   if_success:
     name: Notify Success
     runs-on: ubuntu-latest
-    needs: [ nodeBuild, deployLambda ]
+    needs: [ build ]
     env:
-      WORKSPACE: ${{needs.deployLambda.outputs.workspace}}
-      JOB_CONTEXT: ${{needs.deployLambda.outputs.job_context}}
+      WORKSPACE: ${{needs.build.outputs.workspace}}
+      JOB_CONTEXT: ${{needs.build.outputs.job_context}}
     if: success()
     steps:
       - uses: actions/checkout@v2
