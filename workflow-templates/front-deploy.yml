@@ -49,11 +49,7 @@ jobs:
 
     - name: Node Build
       id: node_build
-      uses: terrainvest/.github/actions/node-build@master
-      env:
-        GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        GITHUB_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        FONTAWESOME_NPM_AUTH_TOKEN : ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+      uses: terrainvest/.github/actions/node-build@master      
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2

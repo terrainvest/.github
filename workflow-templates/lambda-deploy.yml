@@ -12,8 +12,8 @@ on:
      - '.github/**'
 
 env:
-  GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  GITHUB_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  
+  GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
+  GITHUB_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}  
 
 jobs:
 
