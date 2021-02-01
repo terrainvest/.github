@@ -1,8 +1,5 @@
 name: 'Node-Build'
 description: 'build node or create dist folder'
-outputs:
-  build_path:
-    description: 'Build path'
 runs:
   using: 'composite'
   steps:

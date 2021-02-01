@@ -59,7 +59,7 @@ def main(build, mainFile, runTest):
 
             buildPath = "build" if os.path.exists("build") else "dist"
             print(f"Set output build path: {buildPath}")
-            print(f"::set-output name=build_path::{buildPath}")
+            os.environ["BUILD_PATH"] = buildPath
 
             if runTest:
                 subprocess.run([package, "test"])
