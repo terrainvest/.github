@@ -59,9 +59,8 @@ def deleteKeys(client):
 
 def syncBuild(client):
     try:
-        print(f"Syncing new files from folder: {os.environ['GITHUB_WORKSPACE']}/build")
-        print(os.path.isdir(f"{os.environ['GITHUB_WORKSPACE']}/build"))
-        for folderName, subfolder, filenames in os.walk(f"{os.environ['GITHUB_WORKSPACE']}/build/"):
+        print(f"Syncing new files from folder: build")        
+        for folderName, subfolder, filenames in os.walk(f"build/"):
             for filename in filenames:                
                 filePath = os.path.join(folderName, filename)
                 filePathReplaced = filePath.replace(f"build/", "")
