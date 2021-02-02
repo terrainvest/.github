@@ -3,10 +3,7 @@ description: 'sync react s3'
 inputs:
   aws_profile:
     description: 'Profile aws'
-    required: true
-  folder_build:
-    description: 'folder of build to sync in s3'
-    required: true
+    required: true  
   cf_id:
     description: 'cf id to invalidade'
     required: true
@@ -23,5 +20,5 @@ runs:
         echo "CFID: ${{ inputs.cf_id }}"
         echo "Bucket: ${{ inputs.bucket }}"
       shell: bash
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.folder_build }} ${{ inputs.cf_id }} ${{ inputs.bucket }}
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.cf_id }} ${{ inputs.bucket }}
       shell: bash

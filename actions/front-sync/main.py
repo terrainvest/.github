@@ -9,7 +9,6 @@ from time import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('profile', help="- My local credential profile.", nargs='?', const='default')
-parser.add_argument('folder', help="- folder that node has builded.", nargs='?', const='default')
 parser.add_argument('cfid', help="- cf id to invalidade.", nargs='?', const='default')
 parser.add_argument('bucket', help="- bucket to sync.", nargs='?', const='default')
 
@@ -60,12 +59,12 @@ def deleteKeys(client):
 
 def syncBuild(client):
     try:
-        print(f"Syncing new files from folder: {os.environ['GITHUB_WORKSPACE']}/{args.folder}")
-        print(os.path.isdir(f"{os.environ['GITHUB_WORKSPACE']}/{args.folder}"))
-        for folderName, subfolder, filenames in os.walk(f"{os.environ['GITHUB_WORKSPACE']}/{args.folder}/"):
+        print(f"Syncing new files from folder: {os.environ['GITHUB_WORKSPACE']}/build")
+        print(os.path.isdir(f"{os.environ['GITHUB_WORKSPACE']}/build"))
+        for folderName, subfolder, filenames in os.walk(f"{os.environ['GITHUB_WORKSPACE']}/build/"):
             for filename in filenames:                
                 filePath = os.path.join(folderName, filename)
-                filePathReplaced = filePath.replace(f"{args.folder}/", "")
+                filePathReplaced = filePath.replace(f"build/", "")
                 print(f"Uploading file: {filePathReplaced}")
                 response = client.upload_file(filePath, args.bucket, filePathReplaced)
                 print(f"Response: {response}")
