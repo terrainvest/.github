@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import mimetypes
 import boto3
 import sys
 import argparse
@@ -65,7 +66,8 @@ def syncBuild(client):
                 filePath = os.path.join(folderName, filename)
                 filePathReplaced = filePath.replace(f"build/", "")
                 print(f"Uploading file: {filePathReplaced}")
-                response = client.upload_file(filePath, args.bucket, filePathReplaced)                
+                mime_type = mime.guess_type(filePathReplaced)
+                response = client.put_object(Body=filePath, Bucket=args.bucket, Key=filePathReplaced, ContentType=mime_type[0])                
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
