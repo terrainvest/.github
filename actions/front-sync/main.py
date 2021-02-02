@@ -36,11 +36,10 @@ def main():
 
 def deleteKeys(client):
     try:
-        print(f"Get Keys to delete from bucket: {str(args.bucket)}")
+        print(f"Get Keys to delete")
         response = client.list_objects(Bucket=str(args.bucket))
 
         print("Filter keys")
-
         if 'Contents' in response:
             deleteKeys = {'Objects': []}
             for content in response['Contents']:
@@ -61,11 +60,14 @@ def deleteKeys(client):
 
 def syncBuild(client):
     try:
+        print(f"Syncing new files from folder: {arg.folder}")
         for folderName, subfolder, filenames in os.walk(f"{args.folder}"):
-            for filename in filenames:
+            for filename in filenames:                
                 filePath = os.path.join(folderName, filename)
                 filePathReplaced = filePath.replace(f"{args.folder}/", "")
-                client.upload_file(filePath, args.bucket, filePathReplaced)
+                print(f"Uploading file: {filePathReplaced}")
+                response = client.upload_file(filePath, args.bucket, filePathReplaced)
+                print(f"Response: {response}")
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
