@@ -11,6 +11,11 @@ on:
      - 'terraform/**'
      - '.github/**'
 
+  workflow_dispatch:
+    inputs:
+      comment:        
+        required: false
+
 env:
   GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
   GITHUB_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}  
