@@ -60,7 +60,7 @@ def deleteKeys(client):
 
 def syncBuild(client):
     try:
-        print(f"Syncing new files from folder: {arg.folder}")
+        print(f"Syncing new files from folder: {args.folder}")
         for folderName, subfolder, filenames in os.walk(f"{args.folder}"):
             for filename in filenames:                
                 filePath = os.path.join(folderName, filename)
