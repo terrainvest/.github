@@ -40,14 +40,18 @@ def deleteKeys(client):
         response = client.list_objects(Bucket=str(args.bucket))
 
         print("Filter keys")
-        deleteKeys = {'Objects': []}
-        for content in response['Contents']:
-            keyMap = dict()
-            keyMap['Key'] = content['Key']
-            deleteKeys['Objects'].append(keyMap)
 
-        print(f"Keys to delete: {str(deleteKeys)}")
-        client.delete_objects(Bucket=args.bucket, Delete=str(deleteKeys))
+        if 'Contents' in response:
+            deleteKeys = {'Objects': []}
+            for content in response['Contents']:
+                keyMap = dict()
+                keyMap['Key'] = content['Key']
+                deleteKeys['Objects'].append(keyMap)
+
+            print(f"Keys to delete: {str(deleteKeys)}")
+            client.delete_objects(Bucket=args.bucket, Delete=deleteKeys)
+        else:
+            print("Bucket already empty")
 
     except Exception as e:
         sys.exit(f'Error on delete s3: {e}')
