@@ -65,8 +65,7 @@ def syncBuild(client):
                 filePath = os.path.join(folderName, filename)
                 filePathReplaced = filePath.replace(f"build/", "")
                 print(f"Uploading file: {filePathReplaced}")
-                response = client.upload_file(filePath, args.bucket, filePathReplaced)
-                print(f"Response: {response}")
+                response = client.upload_file(filePath, args.bucket, filePathReplaced)                
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
@@ -76,6 +75,7 @@ def syncBuild(client):
 
 def invalidateCF(client):
     try:
+        print("Invalidatinf CF")
         client.create_invalidation(
             DistributionId=args.cfid,
             InvalidationBatch={
