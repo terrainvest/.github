@@ -67,7 +67,10 @@ def syncBuild(client):
                 filePathReplaced = filePath.replace(f"build/", "")
                 print(f"Uploading file: {filePathReplaced}")
                 mime_type = mimetypes.guess_type(filePathReplaced)
-                response = client.put_object(Body=filePath, Bucket=args.bucket, Key=filePathReplaced, ContentType=mime_type[0])                
+                if mime_type[0] != None:
+                    client.put_object(Body=filePath, Bucket=args.bucket, Key=filePathReplaced, ContentType=mime_type[0])
+                else:
+                    client.put_object(Body=filePath, Bucket=args.bucket, Key=filePathReplaced)
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
