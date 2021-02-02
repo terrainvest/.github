@@ -60,7 +60,7 @@ def deleteKeys(client):
 
 def syncBuild(client):
     try:
-        print(f"Syncing new files from folder: {args.folder}")
+        print(f"Syncing new files from folder: {os.environ['ROOT_PATH']}{args.folder}")
         print(os.path.isdir(f"{os.environ['ROOT_PATH']}{args.folder}"))
         for folderName, subfolder, filenames in os.walk(f"{os.environ['ROOT_PATH']}{args.folder}/"):
             for filename in filenames:                
