@@ -22,11 +22,10 @@ env:
   FONTAWESOME_NPM_AUTH_TOKEN : ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
 
 jobs:
+
   install:
     name: install
-    runs-on: ubuntu-latest
-    outputs:
-      build_path: ${{steps.path.outputs.build_path}}
+    runs-on: ubuntu-latest    
     steps:
     
     - uses: actions/checkout@v2
@@ -98,8 +97,8 @@ jobs:
         fi
         echo "::set-output name=WORKSPACE::$profile"
         echo "PROFILE=$profile" >> $GITHUB_ENV
-        echo "CFID=${profile}_CFID" >> $GITHUB_ENV
-        echo "BUCKET=${profile}_BUCKET" >> $GITHUB_ENV
+        echo "CFID=${profile^^}_CFID" >> $GITHUB_ENV
+        echo "BUCKET=${profile^^}_BUCKET" >> $GITHUB_ENV
 
     - name: Setup AWS Profile
       uses: terrainvest/.github/actions/setup-aws-py@master
@@ -125,11 +124,16 @@ jobs:
           node-${{ hashFiles('yarn.lock') }}
           node-
 
+    - name: Get Dist Folder
+      uses: actions/download-artifact@master
+      with:
+        name: nodeDist
+        path: build
+
     - name: Sync Front
       uses: terrainvest/.github/actions/front-sync@master
       with:
-        aws_profile: ${{ env.PROFILE }}
-        folder_build: ${{ needs.install.outputs.build_path }}
+        aws_profile: ${{ env.PROFILE }}        
         cf_id: ${{ secrets[env.CFID] }}
         bucket: ${{ secrets[env.BUCKET] }}
 
@@ -156,7 +160,7 @@ jobs:
                           **Bucket:** ${{ secrets[env.BUCKET] }}`}"
           job: ${{ env.JOB_CONTEXT }}
           needs: ${{ toJson(needs) }}
-
+        
   if_success:
     name: Notify Success
     runs-on: ubuntu-latest
