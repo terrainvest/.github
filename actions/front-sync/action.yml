@@ -17,5 +17,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - run: |
+        echo "Profile: ${{ inputs.aws_profile }}"
+        echo "Folder Build: ${{ inputs.folder_build }}"
+        echo "CFID: ${{ inputs.cf_id }}"
+        echo "Bucket: ${{ inputs.bucket }}"
+      shell: bash
     - run: python3 ${{ github.action_path }}/main.py ${{ inputs.aws_profile }} ${{ inputs.folder_build }} ${{ inputs.cf_id }} ${{ inputs.bucket }}
       shell: bash
