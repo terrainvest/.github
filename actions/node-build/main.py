@@ -50,21 +50,21 @@ def main(build, mainFile, runTest):
         if build:
             if useYarn():
                 print("Installing yarn")
-                os.system("npm install -g yarn")
+                os.system(["npm", "install", "-g", "yarn"])
                 print("Yarn version")
-                os.system("yarn --version")
+                os.system(["yarn", "--version"])
                 package = "yarn"
             
             nodeEnv = os.getenv["NODE_ENV"]
-            print(f"start build using NODE_ENV: {nodeEnv}")
+            print(f"build NODE_ENV: {nodeEnv}")
 
             print(f"running {package} install")
-            os.system(f"{package} install")
+            os.system([package, "install"])
             print(f"running {package} build")
-            os.system(f"{package} run build")
+            os.system([package, "run", "build"])
 
             if runTest:
-                os.system(f"{package} test")
+                subprocess.run([package, "test"])
 
         else:
             print("create dist folder")
