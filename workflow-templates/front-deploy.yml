@@ -50,9 +50,9 @@ jobs:
       id: get-workspace
       run: |
         branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
-        if [[ $branch_name == *"ma"* ]]; then profile="prd"
-        elif [[ $branch_name == *"hom"* ]]; then profile="hml"
-        else profile="dev"
+        if [[ $branch_name == *"ma"* ]]; then profile="production"
+        elif [[ $branch_name == *"hom"* ]]; then profile="homologation"
+        else profile="development"
         fi        
         echo "NODE_ENV=$profile" >> $GITHUB_ENV
         
