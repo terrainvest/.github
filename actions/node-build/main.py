@@ -55,7 +55,7 @@ def main(build, mainFile, runTest):
                 subprocess.run(["yarn", "--version"])
                 package = "yarn"
             
-            nodeEnv = os.getenv["NODE_ENV"]
+            nodeEnv = os.getenv("NODE_ENV")
             print(f"build NODE_ENV: {nodeEnv}")
 
             print(f"running {package} install")
