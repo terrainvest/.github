@@ -55,7 +55,8 @@ def main(build, mainFile, runTest):
                 os.system(["yarn", "--version"])
                 package = "yarn"
             
-            print(f"start build using NODE_ENV: {os.environ["NODE_ENV"]}")
+            nodeEnv = os.getenv["NODE_ENV"]
+            print(f"start build using NODE_ENV: {nodeEnv}")
 
             print(f"running {package} install")
             os.system(f"{package} install"])
