@@ -12,7 +12,7 @@ on:
 
   workflow_dispatch:
     inputs:
-      comment:        
+      environment:        
         required: false
 
 env:
@@ -52,7 +52,8 @@ jobs:
         branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
         if [[ $branch_name == *"ma"* ]]; then profile="production"
         elif [[ $branch_name == *"hom"* ]]; then profile="homologation"
-        else profile="development"
+        elif [[ $branch_name == *"dev"* ]]; then profile="development"
+        else profile="${{github.event.inputs.environment}}"
         fi        
         echo "NODE_ENV=$profile" >> $GITHUB_ENV
         
