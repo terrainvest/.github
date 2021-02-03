@@ -65,7 +65,7 @@ def syncBuild(client):
             indexBar = folderName.index('/')
             for filename in filenames:                
                 filePath = os.path.join(folderName, filename)
-                filePathReplaced = filePath[indexBar:len(filePath)]
+                filePathReplaced = filePath[indexBar + 1:len(filePath)]
                 print(f"Uploading file: {filePathReplaced}")
                 mime_type = mimetypes.guess_type(filePathReplaced)
                 if mime_type[0] != None:
