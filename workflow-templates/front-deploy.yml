@@ -104,8 +104,8 @@ jobs:
       run: |
         input_name=${{github.event.inputs.environment}}
         branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
-        if [[$branch_name == *"ma"*] || [$input_name == *"prod"*]]; then profile="prd"
-        elif [[$branch_name == *"hom"*] || [$input_name == *"hom"*]]; then profile="hml"
+        if [[ $branch_name == *"ma"* || $input_name == *"prod"* ]]; then profile="prd"
+        elif [[ $branch_name == *"hom"* || $input_name == *"hom"* ]]; then profile="hml"
         else profile="dev"
         fi
         echo "::set-output name=WORKSPACE::$profile"
