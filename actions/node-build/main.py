@@ -2,6 +2,7 @@ import subprocess
 import json
 import os
 import shutil
+import sys
 
 
 def readPackage():
@@ -32,7 +33,9 @@ def createDist(mainFile):
     shutil.copyfile(mainFile, f'./dist/{mainFile}')
     shutil.copyfile("package.json", './dist/package.json')
     shutil.copyfile("package-lock.json", './dist/package-lock.json')
-    shutil.copytree("./node_modules", './dist/node_modules')
+
+    if sys.argv[1] != "lambda":
+        shutil.copytree("./node_modules", './dist/node_modules')
 
     pass
 
