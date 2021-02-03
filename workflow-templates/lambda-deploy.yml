@@ -1,7 +1,7 @@
 name: Lambda-WorkFlow
 
 on:
-  workflow_dispatch  
+  
   push:
     branches:
      - master
@@ -24,9 +24,7 @@ jobs:
 
   nodeBuild:
     runs-on: ubuntu-latest
-    name: Node Build
-    outputs:
-      build_path: ${{steps.node_build.outputs.build_path}}
+    name: Node Build    
     steps:
 
       - name: Checkout
@@ -56,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: nodeDist
-          path: ${{steps.node_build.outputs.build_path}}
+          path: dist
 
 
   deployLambda:
@@ -99,7 +97,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: nodeDist
-          path: ${{needs.nodeBuild.outputs.build_path}}
+          path: ./dist
 
       - name: Check file existence
         id: check_files
@@ -120,7 +118,6 @@ jobs:
           aws_profile: ${{ env.WORKSPACE }}
           using_docker: ${{ steps.check_files.outputs.files_exists }}
           image_uri: ${{ steps.docker-build.outputs.image }}
-          folder_build: ${{needs.nodeBuild.outputs.build_path}}
 
   if_failure:
     name: Notify Failure

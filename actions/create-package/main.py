@@ -4,7 +4,6 @@ import boto3
 from zipfile import ZipFile
 import os
 import argparse
-from os.path import basename
 from botocore.exceptions import ClientError
 
 parser = argparse.ArgumentParser()
@@ -46,10 +45,12 @@ def createPackage():
 
     print(f"Creating zip file from ./{args.folder} folder")
     with ZipFile(zipName, 'w') as zipObj:
-        for folderName, subfolders, filenames in os.walk(f"./{args.folder}"):
+        for folderName, subfolders, filenames in os.walk(f"{args.folder}"):
+            indexBar = folderName.index('/')
             for filename in filenames:
                 filePath = os.path.join(folderName, filename)
-                zipObj.write(filePath, basename(filePath))
+                fileZip = filePath[indexBar:len(filePath)]
+                zipObj.write(filePath, fileZip)
 
     print(f"Zip Name: {zipName}")
 
