@@ -1,0 +1,8 @@
+name: 'Load-Secrets'
+description: 'sync react s3'
+
+runs:
+  using: 'composite'
+  steps:    
+    - run: python3 ${{ github.action_path }}/main.py
+      shell: bash
