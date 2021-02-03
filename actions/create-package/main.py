@@ -45,7 +45,7 @@ def createPackage():
 
     print(f"Creating zip file from ./{args.folder} folder")
     with ZipFile(zipName, 'w') as zipObj:
-        for folderName, subfolders, filenames in os.walk(f"{args.folder}"):
+        for folderName, subfolders, filenames in os.walk(f"{args.folder}/"):
             indexBar = folderName.index('/')
             for filename in filenames:
                 filePath = os.path.join(folderName, filename)
