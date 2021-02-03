@@ -6,7 +6,7 @@ import subprocess
 
 
 def main():
-    jsonRaw = os.getenv["SECRETS_CONTEXT"]
+    jsonRaw = os.getenv("SECRETS_CONTEXT")
     jsonData = json.load(jsonRaw)
 
     for key, value in jsonData.items():
