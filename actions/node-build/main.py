@@ -9,14 +9,14 @@ def readPackage():
     jsonFile = open('./package.json')
     jsonData = json.load(jsonFile)
 
-    retorno = False
+    nodeBuild = None
     test = True
     mainFile = ""
 
     if f'build:{nodeEnv}' in jsonData['scripts']:
-        retorno = True
+        nodeBuild = f'build:{nodeEnv}'
     elif 'build' in jsonData['scripts']:
-        retorno = True
+        nodeBuild = 'build'
 
     if 'main' in jsonData:
         mainFile = jsonData['main']
@@ -24,7 +24,7 @@ def readPackage():
     if 'test' not in jsonData['scripts']:
         test = False
 
-    return retorno, mainFile, test
+    return nodeBuild, mainFile, test
 
 def createDist(mainFile):
     print("mkdir dist")
@@ -49,7 +49,7 @@ def main(build, mainFile, runTest):
 
         package = "npm"
 
-        if build:
+        if build != None:
             if useYarn():
                 print("Installing yarn")
                 subprocess.run(["npm", "install", "-g", "yarn"])
@@ -61,8 +61,8 @@ def main(build, mainFile, runTest):
 
             print(f"running {package} install")
             subprocess.run([package, "install"])
-            print(f"running {package} build")
-            subprocess.run([package, "run", "build"])
+            print(f"running {package} {build}")
+            subprocess.run([package, "run", build])
 
             if runTest:
                 subprocess.run([package, "test"])
