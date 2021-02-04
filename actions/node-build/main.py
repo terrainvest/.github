@@ -53,6 +53,7 @@ def main(build, mainFile, runTest):
             if useYarn():
                 print("Installing yarn")
                 subprocess.run(["npm", "install", "-g", "yarn"])
+                subprocess.run(["npm", "install", "-g", "env-cmd"])
                 print("Yarn version")
                 subprocess.run(["yarn", "--version"])
                 package = "yarn"
