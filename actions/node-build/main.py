@@ -13,7 +13,9 @@ def readPackage():
     test = True
     mainFile = ""
 
-    if 'build' in jsonData['scripts']:
+    if f'build:{nodeEnv}' in jsonData['scripts']:
+        retorno = True
+    elif 'build' in jsonData['scripts']:
         retorno = True
 
     if 'main' in jsonData:
@@ -54,8 +56,7 @@ def main(build, mainFile, runTest):
                 print("Yarn version")
                 subprocess.run(["yarn", "--version"])
                 package = "yarn"
-            
-            nodeEnv = os.getenv("NODE_ENV")
+                        
             print(f"build NODE_ENV: {nodeEnv}")
 
             print(f"running {package} install")
@@ -76,6 +77,7 @@ def main(build, mainFile, runTest):
     pass
 
 if __name__ == '__main__':
+    nodeEnv = os.getenv("NODE_ENV")
     print("Looking for Build script")    
     buildNode, mainFile, runTest = readPackage()
     print(f"Find build script: {buildNode}")
