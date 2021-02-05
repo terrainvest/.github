@@ -19,25 +19,8 @@ async function getPath() {
       let { stdout } = await exec('git diff-tree --no-commit-id --name-only -r -c ' + currentCommit);
       
       if(!Boolean(stdout)){
-
         console.error(`Nothing return from git diff-tree command at commit: ${currentCommit}`)
-
-        let { stdout2 } = await exec(`git log -3 --format='%H'`);
-
-        console.log(stdout2)
-
-        let { stdout } = await exec(`git diff-tree --no-commit-id --name-only -r -c ${stdout2}`);
-
-        console.log(stdout)
-
-        if(Boolean(stdout2)){
-          stdout = stdout2
-        } else{
-
-          core.setFailed(`Nothing return from git diff-tree command at commit: ${currentCommit}`);
-
-        }
-        
+        core.setFailed(`Nothing return from git diff-tree command at commit: ${currentCommit}`);
       }
 
       console.log("Files that have changed:\n" + stdout);
