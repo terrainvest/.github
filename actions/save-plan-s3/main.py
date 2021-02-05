@@ -38,7 +38,7 @@ def syncFile(client):
         print(f"Syncing file: plan-file.tfplan")
         print(f"Key of file: {args.prSha}/{args.key}plan-file.tfplan")
 
-        client.meta.client.upload_file('plan-file.tfplan', 'default.lambda.package.org', f"{args.prSha}/{args.key}plan-file.tfplan")
+        client.meta.client.upload_file(f'{args.key}plan-file.tfplan', 'default.lambda.package.org', f"{args.prSha}/{args.key}plan-file.tfplan")
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
