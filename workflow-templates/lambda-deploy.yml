@@ -1,20 +1,8 @@
 name: Lambda-WorkFlow
 
 on:
-  workflow_dispatch  
-  push:
-    branches:
-     - master
-     - homolog
-     - develop
-    paths-ignore:
-     - 'terraform/**'
-     - '.github/**'
-
-  workflow_dispatch:
-    inputs:
-      comment:        
-        required: false
+  repository_dispatch:
+    event_name: ['lambda-deploy']
 
 env:
   GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}

@@ -1,14 +1,8 @@
 name: TF-Backend
 
 on: 
-  push:
-    branches:
-    - master
-    paths:
-    - 'terraform/backend/**'
-  pull_request:
-    paths:
-    - 'terraform/backend/**'
+  repository_dispatch:
+    event_name: ['backend-tf']
 
 env:
   TF_VERSION: 0.14.4
