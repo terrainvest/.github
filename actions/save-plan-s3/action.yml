@@ -1,0 +1,15 @@
+name: 'Plan to S3'
+description: 'sync plan file to s3'
+inputs:
+  pr_sha:
+    description: 'pr sha'
+    required: true
+  action:
+    description: 'action to do'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.pr_sha }} ${{ inputs.action }}
+      shell: bash
