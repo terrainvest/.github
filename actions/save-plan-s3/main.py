@@ -61,8 +61,8 @@ def getFile(client):
 
             client.meta.client.download_file('default.lambda.package.org', response['Contents'][0]['Key'],
                                              f"{env}plan-file.tfplan")
-            os.system(f'echo "::set-output name=env_apply::{env}"')
-            os.system(f'echo "::set-output name=aws_profile::{profile}"')
+            os.environ["ENV_APPY"] = env
+            os.environ["AWS_PROFILE"] = profile
 
     except Exception as e:
         sys.exit(f'Error getting file: {e}')

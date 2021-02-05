@@ -12,12 +12,6 @@ inputs:
     description: 'key of s3'
     required: false
 
-outputs:
-  env_apply:
-    description: 'working directory'
-  aws_profile:
-    description: 'aws_profile'
-
 runs:
   using: 'composite'
   steps:
