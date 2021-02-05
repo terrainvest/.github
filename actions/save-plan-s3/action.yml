@@ -1,5 +1,6 @@
 name: 'Plan to S3'
 description: 'sync plan file to s3'
+
 inputs:
   pr_sha:
     description: 'pr sha'
@@ -7,9 +8,18 @@ inputs:
   action:
     description: 'action to do'
     required: true
+  key:
+    description: 'key of s3'
+    required: false
+
+outputs:
+  env_apply:
+    description: 'working directory'
+  aws_profile:
+    description: 'aws_profile'
 
 runs:
   using: 'composite'
   steps:
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.pr_sha }} ${{ inputs.action }}
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.pr_sha }} ${{ inputs.action }} ${{ inputs.key }}
       shell: bash
