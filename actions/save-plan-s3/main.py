@@ -5,11 +5,11 @@ import boto3
 import sys
 import argparse
 import os
-from time import time
+import hashlib
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('prSha', help="- prSha to key.", nargs='?', const='default')
+parser.add_argument('prUrl', help="- pr_url to key.", nargs='?', const='default')
 parser.add_argument('action', help="- action to key.", nargs='?', const='put')
 parser.add_argument('key', help="- key to s3.", nargs='?', const='hml')
 
@@ -21,6 +21,8 @@ def main():
     sessionAws = boto3.Session(profile_name='org', region_name='us-east-1')
 
     try:
+        hashKey()
+
         clientS3 = sessionAws.resource('s3')
 
         if args.action == 'put':
@@ -33,12 +35,21 @@ def main():
 
     pass
 
+
+def hashKey():
+    keys = args.prUrl.split('terrainvest/')
+    hash_object = hashlib.sha1(keys[1].encode())
+    args.prUrl = hash_object.hexdigest()
+
+    pass
+
+
 def syncFile(client):
     try:
         print(f"Syncing file: plan-file.tfplan")
-        print(f"Key of file: {args.prSha}/{args.key}plan-file.tfplan")
+        print(f"Key of file: {args.prUrl}/{args.key}plan-file.tfplan")
 
-        client.meta.client.upload_file(f'{args.key}plan-file.tfplan', 'default.lambda.package.org', f"{args.prSha}/{args.key}plan-file.tfplan")
+        client.meta.client.upload_file(f'{args.key}plan-file.tfplan', 'default.lambda.package.org', f"{args.prUrl}/{args.key}plan-file.tfplan")
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
@@ -48,9 +59,9 @@ def syncFile(client):
 
 def getFile(client):
     try:
-        print(f"Searching of file in key: {args.prSha}")
+        print(f"Searching of file in key: {args.prUrl}")
 
-        response = client.meta.client.list_objects(Bucket='default.lambda.package.org', Prefix=args.prSha)
+        response = client.meta.client.list_objects(Bucket='default.lambda.package.org', Prefix=args.prUrl)
 
         if 'Contents' in response:
             print(f"Downloading file: {response['Contents'][0]['Key']}")
@@ -69,6 +80,7 @@ def getFile(client):
         sys.exit(f'Error getting file: {e}')
 
     pass
+
 
 if __name__ == '__main__':
     main()

@@ -2,7 +2,7 @@ name: 'Plan to S3'
 description: 'sync plan file to s3'
 
 inputs:
-  pr_sha:
+  pr_url:
     description: 'pr sha'
     required: true
   action:
@@ -15,5 +15,5 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.pr_sha }} ${{ inputs.action }} ${{ inputs.key }}
+    - run: python3 ${{ github.action_path }}/main.py ${{ inputs.pr_url }} ${{ inputs.action }} ${{ inputs.key }}
       shell: bash
