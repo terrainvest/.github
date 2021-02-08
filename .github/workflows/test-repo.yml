@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
     
-    - run: echo ${{ github.event.client_payload.message.repo }}
+    - run: echo ${{ github.event.client_payload.message }}
 
     - name: Get Repo
       uses: actions/checkout@v2
