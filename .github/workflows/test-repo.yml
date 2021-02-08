@@ -21,6 +21,7 @@ jobs:
     - name: Get Repo
       uses: actions/checkout@v2
       with:
+        token: ${{ secrets.ACCESS_GITHUB_TOKEN }}
         repository: ${{ github.event.client_payload.message.repo }}
         ref: ${{ github.event.client_payload.message.branch }}
     
