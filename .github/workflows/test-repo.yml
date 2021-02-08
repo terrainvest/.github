@@ -1,0 +1,47 @@
+name: Front Workflow
+
+on:
+  repository_dispatch:
+    types: [front-react]
+
+env:
+  GITHUB_TERRA_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
+  GITHUB_NPM_AUTH_TOKEN: ${{ secrets.ACCESS_GITHUB_TOKEN }}
+  FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+
+jobs:
+
+  buildNode:
+    name: buildNode
+    runs-on: ubuntu-latest    
+    steps:
+    
+    - name: Get Repo
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.event.client_payload.repo }}
+        ref: ${{ github.event.client_payload.branch }}
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.3'    
+    
+    - name: Cache Node.js modules
+      uses: actions/cache@v2
+      with:    
+        path: |
+          '**/node_modules'
+          '~/.npm'
+        key: node-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-${{ hashFiles('yarn.lock') }}
+          node-          
+
+    - name: Set Node Env
+      id: get-workspace
+      run: |
+        branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
+        echo $branch_name    
+
+    - run: ls -lrt    
