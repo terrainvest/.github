@@ -16,11 +16,13 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
     
+    - run: echo ${{ github.event.client_payload.message.repo }}
+
     - name: Get Repo
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.client_payload.repo }}
-        ref: ${{ github.event.client_payload.branch }}
+        repository: ${{ github.event.client_payload.message.repo }}
+        ref: ${{ github.event.client_payload.message.branch }}
     
     - name: Use Node.js
       uses: actions/setup-node@v1
