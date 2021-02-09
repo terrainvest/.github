@@ -76,6 +76,8 @@ def getFile(client):
         response = client.meta.client.list_objects(Bucket='default.lambda.package.org', Prefix=args.prUrl)
 
         if 'Contents' in response:
+            env = ""
+            profile = ""
 
             for content in response['Contents']:
                 print(f"Downloading file: {content['Key']}")
@@ -91,8 +93,9 @@ def getFile(client):
                 downloadUrl = content['Key']
 
                 client.meta.client.download_file('default.lambda.package.org', downloadUrl, fileDownload)
-                os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
-                os.system(f'echo "ENV_APPLY={env}" >> $GITHUB_ENV')
+
+            os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
+            os.system(f'echo "ENV_APPLY={env}" >> $GITHUB_ENV')
 
     except Exception as e:
         sys.exit(f'Error getting file: {e}')
