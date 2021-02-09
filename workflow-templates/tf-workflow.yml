@@ -8,13 +8,7 @@ on:
       - 'terraform/org/**'
       - 'terraform/dev/**'
       - 'terraform/hml/**'
-      - 'terraform/prd/**'
-  pull_request:
-    branches: 
-      - master
-    paths:      
-      - 'terraform/dev/**'
-      - 'terraform/hml/**'      
+      - 'terraform/prd/**'  
 
 env:
   TF_VERSION: 0.14.4

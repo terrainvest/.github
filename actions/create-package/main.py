@@ -72,7 +72,7 @@ def createPackage():
 
 if __name__ == '__main__':
 
-    functionName = f"{os.environ['GITHUB_REPOSITORY'].split('/')[1]}-{args.profile}" if args.profile != 'prd' else os.environ['GITHUB_REPOSITORY'].split('/')[1]
+    functionName = f"{os.environ['REPOSITORY'].split('/')[1]}-{args.profile}" if args.profile != 'prd' else os.environ['REPOSITORY'].split('/')[1]
     print(f"Function to update: {functionName}")
     client = main()   
 
