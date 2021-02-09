@@ -70,8 +70,9 @@ def getFile(client):
             env = response['Contents'][0]['Key'][stIndex:lastIndex]
             profile = env.split('/')[1]
 
-            print(f"File: {response['Contents'][0]['Key']}")
             print(f'Save file at: {env}plan-file.tfplan')
+            if not os.path.isdir(env):
+                os.makedirs(env)
             client.meta.client.download_file('default.lambda.package.org', response['Contents'][0]['Key'],
                                              f'{env}plan-file.tfplan')
             os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
