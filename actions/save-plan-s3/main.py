@@ -72,7 +72,7 @@ def getFile(client):
 
             print(f'Save file at: {env}plan-file.tfplan')
             client.meta.client.download_file('default.lambda.package.org', response['Contents'][0]['Key'],
-                                             f"{env}plan-file.tfplan")
+                                             f'{env}plan-file.tfplan')
             os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
             os.system(f'echo "ENV_APPLY={env}" >> $GITHUB_ENV')
 
