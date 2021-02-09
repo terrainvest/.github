@@ -51,6 +51,18 @@ def syncFile(client):
 
         client.meta.client.upload_file(f'{args.key}plan-file.tfplan', 'default.lambda.package.org', f"{args.prUrl}/{args.key}plan-file.tfplan")
 
+        for folderName, subfolder, filenames in os.walk(f"{args.key}.terraform/"):
+            indexBar = folderName.index('/')
+            for filename in filenames:
+                filePath = os.path.join(folderName, filename)
+                filePathReplaced = f"{args.prUrl}/{args.key}{filePath[indexBar + 1:len(filePath)]}"
+                print(f"Uploading file: {filePathReplaced}")
+                mime_type = mimetypes.guess_type(filePathReplaced)
+                if mime_type[0] != None:
+                    client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced, ExtraArgs={'ContentType': mime_type[0]})
+                else:
+                    client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced)
+
     except Exception as e:
         sys.exit(f'Error sync: {e}')
 
