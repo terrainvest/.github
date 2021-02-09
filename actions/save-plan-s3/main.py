@@ -76,19 +76,23 @@ def getFile(client):
         response = client.meta.client.list_objects(Bucket='default.lambda.package.org', Prefix=args.prUrl)
 
         if 'Contents' in response:
-            print(f"Downloading file: {response['Contents'][0]['Key']}")
-            stIndex = response['Contents'][0]['Key'].index(f"/") + 1
-            lastIndex = response['Contents'][0]['Key'].rindex(f"/") + 1
-            env = response['Contents'][0]['Key'][stIndex:lastIndex]
-            profile = env.split('/')[1]
 
-            print(f'Save file at: {env}plan-file.tfplan')
-            if not os.path.isdir(env):
-                os.makedirs(env)
-            client.meta.client.download_file('default.lambda.package.org', response['Contents'][0]['Key'],
-                                             f'{env}plan-file.tfplan')
-            os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
-            os.system(f'echo "ENV_APPLY={env}" >> $GITHUB_ENV')
+            for content in response['Contents']:
+                print(f"Downloading file: {content['Key']}")
+                stIndex = content['Key'].index(f"/") + 1
+                lastIndex = content['Key'].rindex(f"/") + 1
+                env = content['Key'][stIndex:lastIndex]
+                fileDownload = content['Key'][stIndex::]
+                profile = env.split('/')[1]
+
+                if not os.path.isdir(env):
+                    os.makedirs(env)
+
+                downloadUrl = content['Key']
+
+                client.meta.client.download_file('default.lambda.package.org', downloadUrl, fileDownload)
+                os.system(f'echo "AWS_PROFILE={profile}" >> $GITHUB_ENV')
+                os.system(f'echo "ENV_APPLY={env}" >> $GITHUB_ENV')
 
     except Exception as e:
         sys.exit(f'Error getting file: {e}')
