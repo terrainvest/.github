@@ -55,7 +55,7 @@ def syncFile(client):
             indexBar = folderName.index('/')
             for filename in filenames:
                 filePath = os.path.join(folderName, filename)
-                filePathReplaced = f"{args.prUrl}/{args.key}{filePath[indexBar + 1:len(filePath)]}"
+                filePathReplaced = f"{args.prUrl}/{filePath[indexBar + 1:len(filePath)]}"
                 print(f"Uploading file: {filePathReplaced}")
                 mime_type = mimetypes.guess_type(filePathReplaced)
                 if mime_type[0] != None:
