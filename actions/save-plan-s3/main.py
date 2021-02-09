@@ -59,9 +59,9 @@ def syncFile(client):
                 print(f"Uploading file: {filePathReplaced}")
                 mime_type = mimetypes.guess_type(filePathReplaced)
                 if mime_type[0] != None:
-                    client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced, ExtraArgs={'ContentType': mime_type[0]})
+                    client.meta.client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced, ExtraArgs={'ContentType': mime_type[0]})
                 else:
-                    client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced)
+                    client.meta.client.upload_file(filePath, 'default.lambda.package.org', filePathReplaced)
 
     except Exception as e:
         sys.exit(f'Error sync: {e}')
