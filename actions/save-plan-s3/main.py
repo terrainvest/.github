@@ -70,6 +70,7 @@ def getFile(client):
             env = response['Contents'][0]['Key'][stIndex:lastIndex]
             profile = env.split('/')[1]
 
+            print(f"File: {response['Contents'][0]['Key']}")
             print(f'Save file at: {env}plan-file.tfplan')
             client.meta.client.download_file('default.lambda.package.org', response['Contents'][0]['Key'],
                                              f'{env}plan-file.tfplan')
