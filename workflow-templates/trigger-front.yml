@@ -25,19 +25,23 @@ jobs:
       - name: Filter Branch
         id: filter
         run: |
-          branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')          
+          branch_name=$(echo $GITHUB_REF | awk -F / '{print $3}')
+          input_name=${{github.event.inputs.environment}}
+
           echo "::set-output name=branchName::"$branch_name""
 
-          if [[ $branch_name == *"ma"* ]]; then nodeEnv="production"
+          if [[ input_name != "" ]]; then branch_name=$input_name
+          fi
+
+          if [[ $branch_name == *"ma"* || $branch_name == *"prod"* ]]; then nodeEnv="production"
           elif [[ $branch_name == *"hom"* ]]; then nodeEnv="homologation"
           elif [[ $branch_name == *"dev"* ]]; then nodeEnv="development"
           else nodeEnv="${{github.event.inputs.environment}}"
           fi
           echo "::set-output name=node_env::$nodeEnv"
 
-          input_name=${{github.event.inputs.environment}}
-          if [[ $branch_name == *"ma"* || $input_name == *"prod"* ]]; then awsProfile="prd"
-          elif [[ $branch_name == *"hom"* || $input_name == *"hom"* ]]; then awsProfile="hml"
+          if [[ $branch_name == *"ma"* || $branch_name == *"prod"* ]]; then awsProfile="prd"
+          elif [[ $branch_name == *"hom"* ]]; then awsProfile="hml"
           else awsProfile="dev"
           fi
           echo "::set-output name=aws_profile::$awsProfile"

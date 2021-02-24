@@ -5,7 +5,7 @@ import shutil
 import sys
 
 
-def readPackage():
+def readPackage(nodeEnv):
     jsonFile = open('./package.json')
     jsonData = json.load(jsonFile)
 
@@ -14,8 +14,10 @@ def readPackage():
     mainFile = ""
 
     if f'build:{nodeEnv}' in jsonData['scripts']:
+        print(f"using cmd build:{nodeEnv}")
         nodeBuild = f'build:{nodeEnv}'
     elif 'build' in jsonData['scripts']:
+        print(f"using cmd build")
         nodeBuild = 'build'
 
     if 'main' in jsonData:
@@ -80,6 +82,6 @@ def main(build, mainFile, runTest):
 if __name__ == '__main__':
     nodeEnv = os.getenv("NODE_ENV")
     print("Looking for Build script")    
-    buildNode, mainFile, runTest = readPackage()
+    buildNode, mainFile, runTest = readPackage(nodeEnv)
     print(f"Find build script: {buildNode}")
     main(buildNode, mainFile, runTest)
